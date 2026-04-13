@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-space-grotesk), "Arial", "Helvetica", sans-serif;
+  --font-mono: var(--font-jetbrains-mono), "Courier New", Courier, monospace;
+}
+
+@layer utilities {
+  .neon-border {
+    box-shadow: 0 0 1px 1px rgba(6, 182, 212, 0.4), 0 0 10px 2px rgba(6, 182, 212, 0.2);
+    border-color: rgba(6, 182, 212, 0.8);
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Custom JSON syntax highlighting theme colors */
+.json-key { color: #7dd3fc; } /* cyan-300 */
+.json-string { color: #a7f3d0; } /* emerald-300 */
+.json-number { color: #fde047; } /* emerald-300 to yellow-300 */
+.json-boolean { color: #c084fc; } /* sky-400 to purple-400 */
+.json-null { color: #94a3b8; } /* slate-400 */
