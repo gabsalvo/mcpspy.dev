@@ -3,7 +3,7 @@ import Stripe from 'stripe';
 import { clerkClient } from '@clerk/nextjs/server';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder', {
-  apiVersion: '2023-10-16' as any, // Or whatever version you have
+  apiVersion: '2026-03-25.dahlia', // Or whatever version you have
 });
 
 export async function POST(req: Request) {
@@ -18,9 +18,10 @@ export async function POST(req: Request) {
       signature,
       process.env.STRIPE_WEBHOOK_SECRET || ''
     );
-  } catch (err: any) {
-    console.error(`Webhook signature verification failed. ${err.message}`);
-    return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 });
+  } catch (err: unknown) {
+    const error = err as Error;
+    console.error(`Webhook signature verification failed. ${error.message}`);
+    return NextResponse.json({ error: `Webhook Error: ${error.message}` }, { status: 400 });
   }
 
   if (event.type === 'checkout.session.completed') {

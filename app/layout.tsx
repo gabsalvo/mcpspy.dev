@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { ClerkProvider } from '@clerk/nextjs'
 import { Lora, JetBrains_Mono } from 'next/font/google'
+import { ConvexClerkProvider } from './providers'
 import './globals.css'
 
 const lora = Lora({ subsets: ['latin'], variable: '--font-lora' })
@@ -25,6 +26,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${lora.variable} ${jetbrainsMono.variable} font-sans antialiased bg-white text-slate-900`}>
         <ClerkProvider
+          dynamic
+          signUpForceRedirectUrl="/pricing"
+          signInForceRedirectUrl="/dashboard"
+          newSubscriptionRedirectUrl="/dashboard?verify=1"
           appearance={{
             variables: {
               colorPrimary: '#0f172a',
@@ -38,7 +43,9 @@ export default function RootLayout({
             }
           }}
         >
-          {children}
+          <ConvexClerkProvider>
+            {children}
+          </ConvexClerkProvider>
         </ClerkProvider>
       </body>
     </html>

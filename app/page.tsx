@@ -56,11 +56,11 @@ export default function LandingPage() {
                 </SignUpButton>
               </Show>
               <Show when="signed-in">
-                <Link 
-                  href="/pricing"
+                <Link
+                  href="/dashboard"
                   className="px-8 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-medium text-lg shadow-md hover:shadow-lg transition-all border border-slate-800"
                 >
-                  Dashboard
+                  Go to Dashboard
                 </Link>
               </Show>
               <a href="https://github.com/gabsalvo/mcpspy.dev" className="px-8 py-3.5 rounded-xl bg-white border border-slate-200 text-slate-700 font-medium hover:bg-slate-50 transition-colors shadow-sm text-lg flex items-center justify-center">
@@ -132,11 +132,11 @@ export default function LandingPage() {
                   </SignUpButton>
                 </Show>
                 <Show when="signed-in">
-                  <Link 
-                    href="/pricing" 
+                  <Link
+                    href="/dashboard"
                     className="inline-block text-center w-full sm:w-auto px-8 py-3.5 rounded-xl bg-white text-slate-900 hover:bg-slate-50 font-semibold transition-all hover:shadow-md"
                   >
-                    Subscribe Now
+                    Go to Dashboard
                   </Link>
                 </Show>
               </div>
