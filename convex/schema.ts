@@ -15,14 +15,17 @@ export default defineSchema({
 
   // One row per intercepted MCP request, written by CLI via HTTP action
   logs: defineTable({
-    userId: v.string(),            // tokenIdentifier of the owning user
+    userId: v.string(),
     method: v.string(),
-    requestPayload: v.string(),    // JSON string (kept as string to avoid size issues)
+    requestPayload: v.string(),
     responsePayload: v.optional(v.string()),
     durationMs: v.number(),
     status: v.number(),
-    timestamp: v.number(),         // Unix ms
-    serverName: v.optional(v.string()), // label from --name flag, e.g. "filesystem"
+    timestamp: v.number(),
+    serverName: v.optional(v.string()),
+    tokenCountReq: v.optional(v.number()),
+    tokenCountRes: v.optional(v.number()),
+    wasRedacted: v.optional(v.boolean()),
   })
     .index("by_userId_timestamp", ["userId", "timestamp"])
     .index("by_userId_server", ["userId", "serverName"]),

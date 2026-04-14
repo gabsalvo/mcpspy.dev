@@ -38,6 +38,9 @@ http.route({
       status?: number;
       timestamp?: number;
       serverName?: string;
+      tokenCountReq?: number;
+      tokenCountRes?: number;
+      wasRedacted?: boolean;
     };
     try {
       body = await req.json();
@@ -57,6 +60,9 @@ http.route({
       status: body.status ?? 200,
       timestamp: body.timestamp ?? Date.now(),
       serverName: body.serverName,
+      tokenCountReq: body.tokenCountReq,
+      tokenCountRes: body.tokenCountRes,
+      wasRedacted: body.wasRedacted,
     });
 
     return new Response(JSON.stringify({ ok: true }), {

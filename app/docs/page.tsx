@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowLeft, BookOpen, Terminal, Zap, Shield, Code, Cpu, Settings, ExternalLink, Eye, RefreshCw, Share2, Users, Search, AlertTriangle, Keyboard } from 'lucide-react';
+import { ArrowLeft, BookOpen, Terminal, Zap, Shield, Code, Cpu, Settings, ExternalLink, Eye, RefreshCw, Share2, Users, Search, AlertTriangle, Keyboard, Lock, Coins, Download, FlaskConical, Play } from 'lucide-react';
 import { CopyAsMarkdownButton } from './CopyAsMarkdownButton';
 
 export default function DocsPage() {
@@ -55,6 +55,11 @@ export default function DocsPage() {
                 <li><a href="#cloud-sync" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors flex items-center justify-between">Cloud Sync <span className="text-[10px] bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded font-bold uppercase">Pro</span></a></li>
                 <li><a href="#edit-replay" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors flex items-center justify-between">Edit & Replay <span className="text-[10px] bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded font-bold uppercase">Pro</span></a></li>
                 <li><a href="#share-trace" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors flex items-center justify-between">Share Trace <span className="text-[10px] bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded font-bold uppercase">Pro</span></a></li>
+                <li><a href="#redaction" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors flex items-center justify-between">Auto-Redaction <span className="text-[10px] bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded font-bold uppercase">Pro</span></a></li>
+                <li><a href="#tokens" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors flex items-center justify-between">Token Profiling <span className="text-[10px] bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded font-bold uppercase">Pro</span></a></li>
+                <li><a href="#export" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors flex items-center justify-between">Export (cURL / Postman) <span className="text-[10px] bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded font-bold uppercase">Pro</span></a></li>
+                <li><a href="#mock" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors flex items-center justify-between">Auto-Mock Mode <span className="text-[10px] bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded font-bold uppercase">Pro</span></a></li>
+                <li><a href="#ci-runner" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors flex items-center justify-between">CI/CD Test Runner <span className="text-[10px] bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded font-bold uppercase">Pro</span></a></li>
               </ul>
             </div>
 
@@ -575,14 +580,215 @@ export default function DocsPage() {
               </div>
             </section>
 
+            {/* AUTO-REDACTION */}
+            <section id="redaction" className="scroll-mt-32 mb-24 border-t border-slate-100 pt-16">
+              <div className="flex items-center gap-3 mb-6">
+                <Lock className="w-8 h-8 text-amber-500" />
+                <h2 className="text-3xl font-bold text-slate-900 m-0">Auto-Redaction</h2>
+                <span className="text-xs font-bold bg-sky-100 text-sky-700 px-2.5 py-1 rounded-full uppercase tracking-wider">Pro</span>
+              </div>
+              <p>Add <code>--redact-pii</code> to automatically mask secrets from all payloads before they are saved locally or synced to the cloud. Nothing sensitive ever touches the database.</p>
+              <div className="bg-slate-900 rounded-xl p-4 my-6 overflow-x-auto border border-slate-800">
+                <pre className="text-emerald-400 font-mono text-sm m-0">{`npx mcp-spy --target 3000 --redact-pii --sync YOUR_KEY`}</pre>
+              </div>
+              <p>The following patterns are automatically redacted:</p>
+              <div className="grid sm:grid-cols-2 gap-3 not-prose mt-4">
+                {[
+                  ['AWS Access Keys', 'AKIA… patterns'],
+                  ['Bearer tokens', 'Authorization headers in payloads'],
+                  ['Private keys', '-----BEGIN … blocks'],
+                  ['JSON secrets', '"password", "token", "api_key" fields'],
+                  ['Email addresses', 'user@example.com'],
+                  ['High-entropy tokens', '32–64 char hex strings'],
+                ].map(([name, desc]) => (
+                  <div key={name} className="bg-amber-50 border border-amber-100 rounded-xl p-3">
+                    <div className="font-bold text-amber-900 text-sm mb-0.5">{name}</div>
+                    <div className="text-xs text-amber-700">{desc}</div>
+                  </div>
+                ))}
+              </div>
+              <p className="text-sm text-slate-500 mt-4">Redacted logs are tagged with a 🔒 badge in both the TUI and dashboard. The original bytes are forwarded to the MCP server unmodified — redaction only affects storage.</p>
+            </section>
+
+            {/* TOKEN PROFILING */}
+            <section id="tokens" className="scroll-mt-32 mb-24 border-t border-slate-100 pt-16">
+              <div className="flex items-center gap-3 mb-6">
+                <Coins className="w-8 h-8 text-emerald-500" />
+                <h2 className="text-3xl font-bold text-slate-900 m-0">Token Profiling</h2>
+                <span className="text-xs font-bold bg-sky-100 text-sky-700 px-2.5 py-1 rounded-full uppercase tracking-wider">Pro</span>
+              </div>
+              <p>Every intercepted request and response is automatically profiled for token count. This tells you how much of an LLM&apos;s context window each tool call consumes — and gives you a rough cost estimate.</p>
+              <p>Token counts appear as <code>~1.2k</code> badges on every log row in the TUI and dashboard. The TUI stats bar shows the session total. No extra flags needed — it&apos;s always on.</p>
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 mt-6">
+                <h4 className="font-bold text-slate-900 text-sm mb-3">Estimation method</h4>
+                <p className="text-sm text-slate-600 m-0">Uses a blended heuristic (word count × 1.3 vs. char count ÷ 4, take the higher). Accurate to ±15% for JSON/code payloads — adequate for spotting expensive calls without any heavy dependencies.</p>
+              </div>
+            </section>
+
+            {/* EXPORT */}
+            <section id="export" className="scroll-mt-32 mb-24 border-t border-slate-100 pt-16">
+              <div className="flex items-center gap-3 mb-6">
+                <Download className="w-8 h-8 text-sky-500" />
+                <h2 className="text-3xl font-bold text-slate-900 m-0">Export (cURL / Postman)</h2>
+                <span className="text-xs font-bold bg-sky-100 text-sky-700 px-2.5 py-1 rounded-full uppercase tracking-wider">Pro</span>
+              </div>
+              <p>Turn any saved log into a runnable shell command or a Postman collection with one click.</p>
+              <div className="grid sm:grid-cols-2 gap-5 mt-6 not-prose">
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-5">
+                  <h4 className="font-bold text-slate-900 text-sm mb-2">Copy as cURL</h4>
+                  <p className="text-xs text-slate-500 mb-3">In the dashboard: select a log → <strong>Copy cURL</strong> button.<br />In the TUI: select a log → press <code>c</code>.</p>
+                  <div className="bg-slate-900 rounded-lg p-3 overflow-x-auto">
+                    <pre className="text-emerald-400 font-mono text-xs m-0">{`curl -s -X POST http://localhost:4000 \\
+  -H 'Content-Type: application/json' \\
+  -d '{"jsonrpc":"2.0","method":"tools/call",...}'`}</pre>
+                  </div>
+                </div>
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-5">
+                  <h4 className="font-bold text-slate-900 text-sm mb-2">Postman Collection</h4>
+                  <p className="text-xs text-slate-500 mb-3">In the dashboard: click the <strong>Postman</strong> button in the top-right. Downloads a <code>.json</code> file you can import directly into Postman.</p>
+                  <p className="text-xs text-slate-400 italic">The collection includes all currently visible logs as individual requests, respecting any active server filter.</p>
+                </div>
+              </div>
+            </section>
+
+            {/* AUTO-MOCK */}
+            <section id="mock" className="scroll-mt-32 mb-24 border-t border-slate-100 pt-16">
+              <div className="flex items-center gap-3 mb-6">
+                <FlaskConical className="w-8 h-8 text-violet-500" />
+                <h2 className="text-3xl font-bold text-slate-900 m-0">Auto-Mock Mode</h2>
+                <span className="text-xs font-bold bg-sky-100 text-sky-700 px-2.5 py-1 rounded-full uppercase tracking-wider">Pro</span>
+              </div>
+              <p>Add <code>--mock</code> to make MCP-Spy intercept all requests and return saved responses from your local database — <strong>without forwarding anything to the real server.</strong></p>
+              <div className="bg-slate-900 rounded-xl p-4 my-6 overflow-x-auto border border-slate-800">
+                <pre className="text-emerald-400 font-mono text-sm m-0">{`npx mcp-spy --target 3000 --mock`}</pre>
+              </div>
+              <p>For each incoming <code>method</code> (e.g. <code>tools/call</code>), MCP-Spy looks up the most recent successful response for that method in SQLite and returns it immediately. If no saved response exists for a method, it returns a 404 JSON-RPC error.</p>
+              <div className="bg-violet-50 border border-violet-100 rounded-xl p-5 mt-4">
+                <h4 className="text-violet-900 font-bold text-sm mb-2">When is this useful?</h4>
+                <ul className="text-sm text-violet-800 space-y-1 m-0 pl-4 list-disc">
+                  <li>Testing AI agent behaviour without hitting real APIs or incurring costs</li>
+                  <li>Reproducing a specific scenario deterministically</li>
+                  <li>Running the agent while the real MCP server is offline</li>
+                  <li>Frontend development where you don&apos;t need live data</li>
+                </ul>
+              </div>
+            </section>
+
+            {/* CI/CD TEST RUNNER */}
+            <section id="ci-runner" className="scroll-mt-32 mb-24 border-t border-slate-100 pt-16">
+              <div className="flex items-center gap-3 mb-6">
+                <Play className="w-8 h-8 text-emerald-500" />
+                <h2 className="text-3xl font-bold text-slate-900 m-0">CI/CD Test Runner</h2>
+                <span className="text-xs font-bold bg-sky-100 text-sky-700 px-2.5 py-1 rounded-full uppercase tracking-wider">Pro</span>
+              </div>
+              <p>Use the <code>test</code> subcommand to replay saved requests against your MCP server and assert valid JSON-RPC responses. Exits <code>0</code> on all pass, <code>1</code> on any failure — works natively in GitHub Actions, GitLab CI, and any shell pipeline.</p>
+              <div className="bg-slate-900 rounded-xl p-4 my-6 overflow-x-auto border border-slate-800">
+                <pre className="text-emerald-400 font-mono text-sm m-0">{`# Replay last 10 saved requests against the server on port 3000
+npx mcp-spy test --target 3000
+
+# Only replay a specific method
+npx mcp-spy test --target 3000 --method tools/call
+
+# Only replay from a specific server label
+npx mcp-spy test --target 3000 --name filesystem --count 20`}</pre>
+              </div>
+              <div className="bg-slate-900 rounded-2xl p-6 shadow-xl overflow-x-auto border border-slate-800 mt-8 relative">
+                <div className="absolute top-0 left-0 w-full h-8 bg-slate-800/50 border-b border-slate-700/50 flex items-center px-4 gap-2">
+                  <span className="text-xs font-mono text-slate-400">.github/workflows/mcp-test.yml</span>
+                </div>
+<pre className="text-cyan-300 font-mono text-sm mt-6 mb-0 bg-transparent">{`name: MCP Server Tests
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start MCP server
+        run: node server.js &
+      - name: Run MCP-Spy tests
+        run: npx mcp-spy test --target 3000 --count 20`}</pre>
+              </div>
+              <div className="border border-slate-200 rounded-2xl overflow-hidden mt-8 not-prose shadow-sm">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-200">
+                      <th className="py-3 px-5 font-bold text-xs uppercase tracking-wider text-slate-600">Flag</th>
+                      <th className="py-3 px-5 font-bold text-xs uppercase tracking-wider text-slate-600">Description</th>
+                      <th className="py-3 px-5 font-bold text-xs uppercase tracking-wider text-slate-600 text-right">Default</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-sm text-slate-600 divide-y divide-slate-100">
+                    <tr><td className="py-3 px-5 font-mono font-bold text-slate-900">--target</td><td className="py-3 px-5">Port of the MCP server to test</td><td className="py-3 px-5 font-mono text-right text-slate-400">required</td></tr>
+                    <tr><td className="py-3 px-5 font-mono font-bold text-slate-900">--method</td><td className="py-3 px-5">Filter to only replay this JSON-RPC method</td><td className="py-3 px-5 font-mono text-right text-slate-400">all</td></tr>
+                    <tr><td className="py-3 px-5 font-mono font-bold text-slate-900">--name</td><td className="py-3 px-5">Filter to only replay from this server label</td><td className="py-3 px-5 font-mono text-right text-slate-400">all</td></tr>
+                    <tr><td className="py-3 px-5 font-mono font-bold text-slate-900">--count</td><td className="py-3 px-5">Max requests to replay</td><td className="py-3 px-5 font-mono text-right text-slate-400">10</td></tr>
+                    <tr><td className="py-3 px-5 font-mono font-bold text-slate-900">--timeout</td><td className="py-3 px-5">Per-request timeout in ms</td><td className="py-3 px-5 font-mono text-right text-slate-400">5000</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
             {/* TUI KEYBOARD SHORTCUTS */}
             <section id="tui-shortcuts" className="scroll-mt-32 mb-24 border-t border-slate-100 pt-16">
               <div className="flex items-center gap-3 mb-6">
                 <Keyboard className="w-8 h-8 text-slate-600" />
-                <h2 className="text-3xl font-bold text-slate-900 m-0">TUI Keyboard Shortcuts</h2>
+                <h2 className="text-3xl font-bold text-slate-900 m-0">TUI — Invoking &amp; Keyboard Shortcuts</h2>
               </div>
+
+              <h3 className="text-xl font-bold text-slate-800 mb-3 mt-8">How to launch the TUI</h3>
               <p>
-                The Terminal UI (TUI) is the full-screen interface that opens in your terminal when you run <code>npx mcp-spy</code>. It shows a live list of intercepted calls on the left and the selected payload on the right.
+                The Terminal UI (TUI) is a full-screen interface that shows a live list of intercepted MCP calls on the left and the selected payload on the right. It opens automatically whenever you start the proxy with a <code>--target</code> port.
+              </p>
+
+              <div className="bg-slate-900 rounded-2xl p-6 shadow-xl overflow-x-auto border border-slate-800 mt-6 relative">
+                <div className="absolute top-0 left-0 w-full h-8 bg-slate-800/50 border-b border-slate-700/50 flex items-center px-4 gap-2">
+                  <span className="text-xs font-mono text-slate-400">Terminal — start the TUI alongside the proxy</span>
+                </div>
+                <pre className="text-cyan-300 font-mono text-sm mt-6 mb-0 bg-transparent"><code>{`# Basic — proxy + TUI in one command
+npx mcp-spy -t 3001
+
+# With a label and cloud sync (Pro)
+npx mcp-spy -t 3001 --name filesystem --sync mcp_live_XXXX...
+
+# Disable TUI, keep plain console output (useful in CI)
+npx mcp-spy -t 3001 --no-tui`}</code></pre>
+              </div>
+
+              <h3 className="text-xl font-bold text-slate-800 mb-3 mt-10">Standalone welcome &amp; guided setup</h3>
+              <p>
+                Running <code>npx mcp-spy</code> <strong>without <code>--target</code></strong> opens an interactive welcome screen instead of the proxy. You will see:
+              </p>
+              <ol className="list-decimal pl-6 space-y-2 text-slate-600 mt-4">
+                <li><strong>Subscription prompt</strong> — a summary of what Pro unlocks and the price. Press <kbd className="bg-slate-100 border border-slate-300 rounded px-1.5 py-0.5 text-xs font-mono">Y</kbd> to open <code>mcpspy.dev/pricing</code> in your browser, or <kbd className="bg-slate-100 border border-slate-300 rounded px-1.5 py-0.5 text-xs font-mono">N</kbd> to skip.</li>
+                <li><strong>Guided setup wizard</strong> — a 4-step walkthrough that shows you how to connect the official <code>@modelcontextprotocol/server-filesystem</code> server to MCP-SPY and your MCP client. Navigate with <kbd className="bg-slate-100 border border-slate-300 rounded px-1.5 py-0.5 text-xs font-mono">→</kbd> / <kbd className="bg-slate-100 border border-slate-300 rounded px-1.5 py-0.5 text-xs font-mono">N</kbd> and go back with <kbd className="bg-slate-100 border border-slate-300 rounded px-1.5 py-0.5 text-xs font-mono">←</kbd> / <kbd className="bg-slate-100 border border-slate-300 rounded px-1.5 py-0.5 text-xs font-mono">P</kbd>.</li>
+              </ol>
+
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 mt-6 not-prose">
+                <p className="text-sm font-semibold text-slate-700 mb-3">Quick demo with the official filesystem server:</p>
+                <pre className="text-sm font-mono text-slate-800 whitespace-pre-wrap leading-relaxed">{`# Terminal 1 — start the MCP server on port 3001
+npx -y @modelcontextprotocol/server-filesystem \\
+    --transport sse --port 3001 ~/Documents
+
+# Terminal 2 — start MCP-SPY proxy (TUI opens automatically)
+npx mcp-spy -t 3001 --name filesystem
+
+# Claude Desktop config — point at the PROXY (4000), not the server (3001)
+# Edit: ~/Library/Application Support/Claude/claude_desktop_config.json
+{
+  "mcpServers": {
+    "filesystem": {
+      "url": "http://localhost:4000"
+    }
+  }
+}
+# Use "url" — not "command"/"args" — otherwise Claude Desktop
+# spawns the server directly and bypasses the proxy entirely.`}</pre>
+              </div>
+
+              <h3 className="text-xl font-bold text-slate-800 mb-3 mt-10">Keyboard shortcuts</h3>
+              <p>
+                These shortcuts work once the TUI is running with an active proxy.
               </p>
 
               <div className="border border-slate-200 rounded-2xl overflow-hidden mt-8 not-prose shadow-sm">
@@ -599,8 +805,12 @@ export default function DocsPage() {
                       <td className="py-3 px-6">Navigate between log entries</td>
                     </tr>
                     <tr className="hover:bg-slate-50 transition-colors">
-                      <td className="py-3 px-6 font-mono font-bold text-slate-900">Enter</td>
-                      <td className="py-3 px-6">Expand the selected entry to see full payload</td>
+                      <td className="py-3 px-6 font-mono font-bold text-slate-900">s</td>
+                      <td className="py-3 px-6">Cycle server filter — shows all, then each server label in turn</td>
+                    </tr>
+                    <tr className="hover:bg-slate-50 transition-colors">
+                      <td className="py-3 px-6 font-mono font-bold text-slate-900">c</td>
+                      <td className="py-3 px-6">Toggle cURL export view for the selected log</td>
                     </tr>
                     <tr className="hover:bg-slate-50 transition-colors">
                       <td className="py-3 px-6 font-mono font-bold text-slate-900">q</td>
@@ -778,7 +988,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     </tr>
                     <tr className="hover:bg-slate-50 transition-colors">
                       <td className="py-4 px-6 font-mono font-bold text-slate-900 whitespace-nowrap">--name &lt;label&gt;</td>
-                      <td className="py-4 px-6 leading-relaxed">A human-readable label for this MCP server. Shows in the TUI and dashboard so you can tell servers apart when running multiple instances. E.g. <code>--name filesystem</code> or <code>--name github</code>.</td>
+                      <td className="py-4 px-6 leading-relaxed">Human-readable label for this server. Shows in TUI and dashboard for multi-MCP setups. E.g. <code>--name filesystem</code>.</td>
                       <td className="py-4 px-6 font-mono text-slate-400 text-right">port-{'{n}'}</td>
                     </tr>
                     <tr className="hover:bg-slate-50 transition-colors bg-sky-50/50">
@@ -787,12 +997,26 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                       <td className="py-4 px-6 font-mono text-sky-300 text-right">—</td>
                     </tr>
                     <tr className="hover:bg-slate-50 transition-colors">
+                      <td className="py-4 px-6 font-mono font-bold text-slate-900 whitespace-nowrap">--redact-pii</td>
+                      <td className="py-4 px-6 leading-relaxed">Auto-redact secrets (AWS keys, tokens, emails, passwords) from payloads before saving or syncing. Proxy traffic is unaffected.</td>
+                      <td className="py-4 px-6 font-mono text-slate-400 text-right">off</td>
+                    </tr>
+                    <tr className="hover:bg-slate-50 transition-colors">
+                      <td className="py-4 px-6 font-mono font-bold text-slate-900 whitespace-nowrap">--mock</td>
+                      <td className="py-4 px-6 leading-relaxed">Mock mode — return saved responses from the local database instead of forwarding to the real server.</td>
+                      <td className="py-4 px-6 font-mono text-slate-400 text-right">off</td>
+                    </tr>
+                    <tr className="hover:bg-slate-50 transition-colors">
                       <td className="py-4 px-6 font-mono font-bold text-slate-900 whitespace-nowrap">--no-tui</td>
                       <td className="py-4 px-6 leading-relaxed">Disables the interactive TUI. Useful in CI, scripts, or piped output.</td>
-                      <td className="py-4 px-6 font-mono text-slate-400 text-right">false</td>
+                      <td className="py-4 px-6 font-mono text-slate-400 text-right">off</td>
                     </tr>
                   </tbody>
                 </table>
+              </div>
+
+              <div className="mt-6 bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm text-slate-600">
+                <strong className="text-slate-900">Test subcommand:</strong> <code>mcp-spy test --target &lt;port&gt;</code> — see the <a href="#ci-runner" className="text-sky-600 hover:underline">CI/CD Test Runner</a> section for full options.
               </div>
 
               <h3 className="text-xl font-bold text-slate-900 mt-12 mb-4">Running multiple MCP servers simultaneously</h3>

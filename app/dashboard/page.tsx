@@ -1,11 +1,23 @@
 "use client";
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { Activity, Clock, Server, ArrowRightLeft, ShieldCheck, Zap, Copy, Check, ExternalLink } from 'lucide-react';
+import { Activity, Clock, Server, ArrowRightLeft, ShieldCheck, Zap, Copy, Check, ExternalLink, Terminal, Download, Trash2 } from 'lucide-react';
 import ProUpgradeModal from '../../components/ProUpgradeModal';
 import { UserButton, useUser, useAuth } from '@clerk/nextjs';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
+
+function fmtTokens(n: number) {
+  if (!n) return null;
+  return n >= 1000 ? (n / 1000).toFixed(1) + 'k' : String(n);
+}
+
+function toCurl(log: Record<string, unknown>, port = 4000) {
+  let payload = typeof log.requestPayload === 'string' ? log.requestPayload : JSON.stringify(log.requestPayload);
+  try { payload = JSON.stringify(JSON.parse(payload), null, 2); } catch { /* leave */ }
+  const escaped = payload.replace(/'/g, "'\\''");
+  return `curl -s -X POST http://localhost:${port} \\\n  -H 'Content-Type: application/json' \\\n  -d '${escaped}'`;
+}
 
 const CLI_API = 'http://localhost:4001';
 
@@ -45,6 +57,7 @@ function Dashboard() {
   const [selectedLogId, setSelectedLogId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [serverFilter, setServerFilter] = useState<string | undefined>(undefined);
+  const [costModel, setCostModel] = useState('claude-sonnet-4.6');
 
   // Edit & Replay
   const [isReplayOpen, setIsReplayOpen] = useState(false);
@@ -56,6 +69,7 @@ function Dashboard() {
 
   // Share Trace
   const [shareCopied, setShareCopied] = useState(false);
+  const [curlCopied, setCurlCopied] = useState(false);
   const [plainKey, setPlainKey] = useState<string | null>(null);
   const [keyCopied, setKeyCopied] = useState(false);
 
@@ -63,6 +77,8 @@ function Dashboard() {
   const convexUser = useQuery(api.users.me);
   const getOrCreate = useMutation(api.users.getOrCreate);
   const rotateKey = useMutation(api.users.rotateApiKey);
+  const removeLog = useMutation(api.logs.remove);
+  const removeAllLogs = useMutation(api.logs.removeAll);
 
   // Only run logs query once Convex auth is confirmed (convexUser !== undefined)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -101,6 +117,13 @@ function Dashboard() {
       setCliOnline(false);
     }
   }, []);
+
+  // Poll CLI health every 5s so the status dot stays accurate
+  useEffect(() => {
+    checkCli();
+    const interval = setInterval(checkCli, 5000);
+    return () => clearInterval(interval);
+  }, [checkCli]);
 
   const openReplay = useCallback((log: Record<string, unknown>) => {
     let pretty: string;
@@ -146,6 +169,47 @@ function Dashboard() {
     navigator.clipboard.writeText(url);
     setShareCopied(true);
     setTimeout(() => setShareCopied(false), 2500);
+  };
+
+  const handleCopyCurl = (log: Record<string, unknown>) => {
+    navigator.clipboard.writeText(toCurl(log));
+    setCurlCopied(true);
+    setTimeout(() => setCurlCopied(false), 2500);
+  };
+
+  const handleDownloadPostman = () => {
+    const items = logs.map((log: Record<string, unknown>) => {
+      let body = typeof log.requestPayload === 'string' ? log.requestPayload : JSON.stringify(log.requestPayload);
+      try { body = JSON.stringify(JSON.parse(body), null, 2); } catch { /* leave */ }
+      return {
+        name: String(log.method ?? 'unknown'),
+        request: {
+          method: 'POST',
+          header: [{ key: 'Content-Type', value: 'application/json' }],
+          body: { mode: 'raw', raw: body, options: { raw: { language: 'json' } } },
+          url: { raw: 'http://localhost:4000', protocol: 'http', host: ['localhost'], port: '4000' },
+        },
+      };
+    });
+    const collection = JSON.stringify({ info: { name: 'MCP-Spy Export', schema: 'https://schema.getpostman.com/json/collection/v2.1.0/collection.json' }, item: items }, null, 2);
+    const blob = new Blob([collection], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'mcp-spy-collection.json'; a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleDeleteLog = async (logId: string) => {
+    await removeLog({ id: logId as never });
+    if (selectedLogId === logId) setSelectedLogId(null);
+  };
+
+  const handleClearAll = async () => {
+    if (!window.confirm(serverFilter
+      ? `Delete all logs from "${serverFilter}"?`
+      : 'Delete all logs? This cannot be undone.'
+    )) return;
+    await removeAllLogs({ serverName: serverFilter });
+    setSelectedLogId(null);
   };
 
   const router = useRouter();
@@ -207,21 +271,36 @@ function Dashboard() {
 
   return (
     <div className="flex h-screen w-full bg-slate-50 font-mono text-slate-800 overflow-hidden">
-      
+
       {/* Sidebar */}
       <div className="w-80 border-r border-slate-200 bg-white flex flex-col shrink-0 z-10 shadow-sm">
-        
+
         {/* Brand Header */}
         <div className="h-16 flex items-center justify-between px-6 border-b border-slate-100 bg-white shrink-0 select-none">
           <div className="flex items-center gap-2 text-slate-900 font-bold uppercase tracking-wider text-sm">
             <Zap className="w-5 h-5 fill-slate-100 text-slate-400" />
             MCP-SPY
           </div>
-          <div className="flex items-center justify-center gap-4">
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="bg-emerald-500 relative inline-flex rounded-full h-2.5 w-2.5"></span>
-            </span>
+          <div className="flex items-center justify-center gap-3">
+            <div className="flex items-center gap-1.5" title={cliOnline === true ? 'CLI online' : cliOnline === false ? 'CLI offline — run mcp-spy' : 'Checking CLI...'}>
+              {cliOnline === true ? (
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="bg-emerald-500 relative inline-flex rounded-full h-2.5 w-2.5"></span>
+                </span>
+              ) : cliOnline === false ? (
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="bg-slate-300 relative inline-flex rounded-full h-2.5 w-2.5"></span>
+                </span>
+              ) : (
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="bg-amber-400 relative inline-flex rounded-full h-2.5 w-2.5 animate-pulse"></span>
+                </span>
+              )}
+              <span className="text-[9px] font-medium uppercase tracking-wide text-slate-400">
+                {cliOnline === true ? 'live' : cliOnline === false ? 'offline' : '...'}
+              </span>
+            </div>
             <UserButton />
           </div>
         </div>
@@ -245,16 +324,109 @@ function Dashboard() {
             </button>
           ))}
           {(convexLogs ?? []).length > 0 && [...new Set((convexLogs ?? []).map((l: Record<string, string>) => l.serverName).filter(Boolean))].length === 0 && (
-            <p className="text-[10px] text-slate-400 px-3 py-1">No server labels yet.<br/>Use <code className="bg-slate-100 px-1 rounded">--name</code> flag.</p>
+            <p className="text-[10px] text-slate-400 px-3 py-1">No server labels yet.<br />Use <code className="bg-slate-100 px-1 rounded">--name</code> flag.</p>
           )}
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="w-full flex items-center justify-between text-left px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100 border border-transparent transition-all mt-2"
-          >
-            <span className="flex items-center gap-2">💸 Token Analytics</span>
-            <span className="text-[9px] font-bold bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded border border-sky-200">soon</span>
-          </button>
         </div>
+
+        {/* Token Analytics */}
+        {logs.length > 0 && (() => {
+          const visibleLogs = serverFilter ? logs.filter((l: Record<string, unknown>) => l.serverName === serverFilter) : logs;
+          const totalReq = visibleLogs.reduce((s: number, l: Record<string, unknown>) => s + ((l.tokenCountReq as number) ?? 0), 0);
+          const totalRes = visibleLogs.reduce((s: number, l: Record<string, unknown>) => s + ((l.tokenCountRes as number) ?? 0), 0);
+          const total = totalReq + totalRes;
+          if (total === 0) return null;
+
+          // Per-method breakdown (top 5)
+          const byMethod: Record<string, number> = {};
+          for (const l of visibleLogs as Record<string, unknown>[]) {
+            const m = String(l.method ?? 'unknown');
+            byMethod[m] = (byMethod[m] ?? 0) + ((l.tokenCountReq as number) ?? 0) + ((l.tokenCountRes as number) ?? 0);
+          }
+          const topMethods = Object.entries(byMethod).sort((a, b) => b[1] - a[1]).slice(0, 5);
+          const maxTokens = topMethods[0]?.[1] ?? 1;
+
+          return (
+            <div className="px-3 py-3 border-b border-slate-100 bg-slate-50 shrink-0">
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 px-1">Token Analytics</p>
+              {/* Totals row */}
+              <div className="flex gap-2 mb-3">
+                <div className="flex-1 bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-center">
+                  <div className="text-[11px] font-bold text-slate-900">{fmtTokens(total)}</div>
+                  <div className="text-[9px] text-slate-400 uppercase tracking-wide">total</div>
+                </div>
+                <div className="flex-1 bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-center">
+                  <div className="text-[11px] font-bold text-sky-600">{fmtTokens(totalReq)}</div>
+                  <div className="text-[9px] text-slate-400 uppercase tracking-wide">req</div>
+                </div>
+                <div className="flex-1 bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-center">
+                  <div className="text-[11px] font-bold text-emerald-600">{fmtTokens(totalRes)}</div>
+                  <div className="text-[9px] text-slate-400 uppercase tracking-wide">res</div>
+                </div>
+              </div>
+              {/* Per-method bars */}
+              <div className="space-y-1.5">
+                {topMethods.map(([method, tokens]) => (
+                  <div key={method}>
+                    <div className="flex justify-between text-[9px] text-slate-500 mb-0.5">
+                      <span className="truncate max-w-35 font-mono">{method}</span>
+                      <span className="shrink-0 ml-1">~{fmtTokens(tokens)}</span>
+                    </div>
+                    <div className="h-1 bg-slate-200 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-sky-400 rounded-full"
+                        style={{ width: `${Math.round((tokens / maxTokens) * 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {/* Model picker + cost estimate */}
+              {(() => {
+                const MODELS: Record<string, { label: string; rate: number }> = {
+                  // ── Anthropic ──────────────────────────────
+                  'claude-opus-4.6': { label: 'Claude Opus 4.6', rate: 5.00 }, //
+                  'claude-sonnet-4.6': { label: 'Claude Sonnet 4.6', rate: 3.00 }, //
+                  'claude-haiku-4.5': { label: 'Claude Haiku 4.5', rate: 1.00 }, //
+
+                  // ── OpenAI ─────────────────────────────────
+                  'gpt-5.4': { label: 'GPT-5.4', rate: 2.50 }, //
+                  'gpt-5.4-mini': { label: 'GPT-5.4 Mini', rate: 0.75 }, //
+                  'gpt-5.2': { label: 'GPT-5.2', rate: 1.75 }, //
+                  'gpt-5': { label: 'GPT-5', rate: 1.25 }, //
+                  'gpt-5-mini': { label: 'GPT-5 Mini', rate: 0.25 }, //
+                  'o4-mini': { label: 'o4-mini', rate: 1.10 }, //
+
+                  // ── Google ─────────────────────────────────
+                  'gemini-3.1-pro': { label: 'Gemini 3.1 Pro', rate: 2.00 }, //
+                  'gemini-2.5-pro': { label: 'Gemini 2.5 Pro', rate: 1.25 }, //
+                  'gemini-2.0-flash-lite': { label: 'Gemini 2.0 Flash-Lite', rate: 0.075 }, //
+
+                  // ── Open Weights / Others ──────────────────
+                  'grok-4': { label: 'Grok 4', rate: 3.00 }, //
+                  'deepseek-r1': { label: 'DeepSeek R1', rate: 0.80 }, //
+                  'deepseek-v3.2': { label: 'DeepSeek V3.2', rate: 0.28 }, //
+                  'llama-4-maverick': { label: 'Llama 4 Maverick', rate: 0.15 } //
+                };
+                const { rate } = MODELS[costModel] ?? MODELS['claude-sonnet-4.6'];
+                const cost = (total / 1_000_000) * rate;
+                return (
+                  <div className="mt-2 px-1 flex items-center justify-between gap-2">
+                    <span className="text-[9px] text-slate-400">~${cost.toFixed(4)} est.</span>
+                    <select
+                      value={costModel}
+                      onChange={e => setCostModel(e.target.value)}
+                      className="text-[9px] text-slate-500 bg-transparent border border-slate-200 rounded px-1 py-0.5 cursor-pointer hover:border-slate-300 transition-colors outline-none"
+                    >
+                      {Object.entries(MODELS).map(([key, { label }]) => (
+                        <option key={key} value={key}>{label}</option>
+                      ))}
+                    </select>
+                  </div>
+                );
+              })()}
+            </div>
+          );
+        })()}
 
         {/* API Key Section */}
         <div className="px-3 py-3 border-b border-slate-100 bg-white shrink-0">
@@ -325,10 +497,16 @@ function Dashboard() {
                     <span className="flex items-center gap-1">
                       {new Date(log.timestamp).toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                     </span>
-                    <span className={`${hasError ? 'text-red-500' : (isSlow ? 'text-amber-500' : 'text-emerald-500')} flex items-center gap-1`}>
-                      <Clock className="w-3 h-3" />
-                      {log.durationMs}ms
-                    </span>
+                    <div className="flex items-center gap-1.5">
+                      {fmtTokens((log.tokenCountReq ?? 0) + (log.tokenCountRes ?? 0)) && (
+                        <span className="text-[10px] text-slate-400">~{fmtTokens((log.tokenCountReq ?? 0) + (log.tokenCountRes ?? 0))}t</span>
+                      )}
+                      {log.wasRedacted && <span title="PII was redacted" className="text-amber-500 text-[10px]">🔒</span>}
+                      <span className={`${hasError ? 'text-red-500' : (isSlow ? 'text-amber-500' : 'text-emerald-500')} flex items-center gap-1`}>
+                        <Clock className="w-3 h-3" />
+                        {log.durationMs}ms
+                      </span>
+                    </div>
                   </div>
                   {log.serverName && (
                     <div className="mt-1">
@@ -345,11 +523,24 @@ function Dashboard() {
             })
           )}
         </div>
+
+        {/* Clear logs button */}
+        {logs.length > 0 && (
+          <div className="px-3 py-2 border-t border-slate-100 shrink-0">
+            <button
+              onClick={handleClearAll}
+              className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-medium text-slate-400 hover:text-red-500 hover:bg-red-50 border border-transparent hover:border-red-100 transition-all"
+            >
+              <Trash2 className="w-3 h-3" />
+              {serverFilter ? `Clear "${serverFilter}" logs` : 'Clear all logs'}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Main Area: Inspection View */}
       <div className="flex-1 flex flex-col bg-slate-50 relative">
-        
+
         {/* Top Nav / Ribbon */}
         <div className="h-16 flex items-center justify-between px-6 border-b border-slate-200 bg-white sticky top-0 z-10">
           <div className="flex items-center gap-4 text-xs font-medium text-slate-500">
@@ -367,11 +558,21 @@ function Dashboard() {
                     {selectedLog.serverName}
                   </span>
                 )}
+                {((selectedLog.tokenCountReq ?? 0) + (selectedLog.tokenCountRes ?? 0)) > 0 && (
+                  <span className="text-[11px] bg-slate-100 text-slate-500 border border-slate-200 px-2.5 py-1 rounded-full font-mono">
+                    ~{fmtTokens((selectedLog.tokenCountReq ?? 0) + (selectedLog.tokenCountRes ?? 0))} tokens
+                  </span>
+                )}
+                {selectedLog.wasRedacted && (
+                  <span className="text-[11px] bg-amber-50 text-amber-700 border border-amber-100 px-2.5 py-1 rounded-full font-medium">
+                    🔒 redacted
+                  </span>
+                )}
               </>
             ) : (
               <span className="text-slate-400">Select a request to inspect payloads</span>
             )}
-            
+
             {/* Context Action Buttons */}
             {selectedLog && (
               <div className="flex items-center gap-2 ml-4 pl-4 border-l border-slate-200">
@@ -382,23 +583,50 @@ function Dashboard() {
                   <span className="text-[11px]">🔄</span> Edit &amp; Replay
                 </button>
                 <button
+                  onClick={() => handleCopyCurl(selectedLog)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white hover:bg-slate-50 text-slate-600 transition-colors border border-slate-200 text-xs shadow-sm"
+                >
+                  {curlCopied
+                    ? <><Check className="w-3 h-3 text-emerald-500" /> Copied!</>
+                    : <><Terminal className="w-3 h-3" /> Copy cURL</>
+                  }
+                </button>
+                <button
                   onClick={() => handleShare(selectedLog._id)}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white hover:bg-slate-50 text-slate-600 transition-colors border border-slate-200 text-xs shadow-sm"
                 >
                   {shareCopied
                     ? <><Check className="w-3 h-3 text-emerald-500" /> Copied!</>
-                    : <><ExternalLink className="w-3 h-3" /> Share Trace</>
+                    : <><ExternalLink className="w-3 h-3" /> Share</>
                   }
+                </button>
+                <button
+                  onClick={() => handleDeleteLog(selectedLog._id)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white hover:bg-red-50 text-slate-400 hover:text-red-500 transition-colors border border-slate-200 text-xs shadow-sm"
+                  title="Delete this log"
+                >
+                  <Trash2 className="w-3 h-3" />
                 </button>
               </div>
             )}
           </div>
-          
-          <a
-            href="/"
-            className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-600 text-xs font-medium tracking-wide transition-all border border-slate-200 shadow-sm">
-            ← Home
-          </a>
+
+          <div className="flex items-center gap-2">
+            {logs.length > 0 && (
+              <button
+                onClick={handleDownloadPostman}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-500 text-xs font-medium transition-all border border-slate-200 shadow-sm"
+                title="Export all visible logs as a Postman collection"
+              >
+                <Download className="w-3 h-3" /> Postman
+              </button>
+            )}
+            <a
+              href="/"
+              className="flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-600 text-xs font-medium tracking-wide transition-all border border-slate-200 shadow-sm">
+              ← Home
+            </a>
+          </div>
         </div>
 
         {/* Body: Split View */}

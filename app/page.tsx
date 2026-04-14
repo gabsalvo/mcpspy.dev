@@ -46,41 +46,38 @@ export default function LandingPage() {
             The ultimate zero-config local observability proxy for the Model Context Protocol. Intercept, replay, and share payloads in seconds across any language workspace.
           </p>
 
-          <div className="flex flex-col items-center gap-4 mb-14">
-            <div className="flex flex-wrap justify-center gap-4">
-              <Show when="signed-out">
-                <SignUpButton mode="modal" forceRedirectUrl="/pricing">
-                  <button className="px-8 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-medium text-lg shadow-md hover:shadow-lg transition-all border border-slate-800">
-                    Subscribe Now
-                  </button>
-                </SignUpButton>
-              </Show>
-              <Show when="signed-in">
-                <Link
-                  href="/dashboard"
-                  className="px-8 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-medium text-lg shadow-md hover:shadow-lg transition-all border border-slate-800"
-                >
-                  Go to Dashboard
-                </Link>
-              </Show>
-              <a href="https://github.com/gabsalvo/mcpspy.dev" className="px-8 py-3.5 rounded-xl bg-white border border-slate-200 text-slate-700 font-medium hover:bg-slate-50 transition-colors shadow-sm text-lg flex items-center justify-center">
-                View on GitHub
-              </a>
+          {/* Single terminal — the one command to start */}
+          <div className="w-full max-w-xl mb-5">
+            <div className="bg-black border border-neutral-800 rounded-xl p-5 font-mono text-gray-300 text-left shadow-2xl">
+              <div className="flex items-center gap-2 mb-4 border-b border-slate-800 pb-3">
+                <div className="w-3 h-3 rounded-full bg-red-400" />
+                <div className="w-3 h-3 rounded-full bg-amber-400" />
+                <div className="w-3 h-3 rounded-full bg-emerald-400" />
+                <span className="ml-2 text-xs font-mono tracking-widest uppercase text-slate-500">Terminal</span>
+              </div>
+              <p className="text-sky-400 text-base">$ npx mcp-spy</p>
+              <p className="text-slate-500 mt-2 text-sm">Guided setup opens in your terminal. No flags needed.</p>
             </div>
-            <span className="text-sm text-slate-500">Always free for local use. Pro unlocks cloud sync and replay.</span>
           </div>
 
-          <div aria-hidden="true" className="w-full max-w-2xl bg-black border border-neutral-800 rounded-xl p-5 font-mono text-gray-300 text-left shadow-2xl relative overflow-hidden group">
-            <div className="flex items-center gap-2 text-slate-500 mb-4 border-b border-slate-800 pb-3">
-              <div className="w-3 h-3 rounded-full bg-red-400" />
-              <div className="w-3 h-3 rounded-full bg-amber-400" />
-              <div className="w-3 h-3 rounded-full bg-emerald-400" />
-              <span className="ml-2 text-xs font-mono tracking-widest uppercase">Terminal</span>
-            </div>
-            <p className="text-sky-400 mb-1">$ npx mcp-spy --target 3000 --sync mcp_live_4829xA92...</p>
-            <p className="text-slate-300">Starting MCP-Spy Proxy...</p>
-            <p className="text-emerald-400">[PRO] Cloud sync authenticated!</p>
-            <p className="text-slate-400">Listening on localhost:4000 -&gt; localhost:3000</p>
+          {/* Pro hook */}
+          <div className="w-full max-w-xl mb-16 flex items-center justify-between gap-4 px-5 py-4 rounded-xl border border-slate-200 bg-slate-50">
+            <p className="text-slate-600 text-sm leading-snug">
+              Need more out of MCP-SPY?<br />
+              <span className="text-slate-400 text-xs">Cloud sync, web dashboard, token analytics, shareable traces and replay.</span>
+            </p>
+            <Show when="signed-out">
+              <SignUpButton mode="modal" forceRedirectUrl="/pricing">
+                <button className="shrink-0 px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm shadow-sm transition-all border border-slate-800">
+                  Try Pro →
+                </button>
+              </SignUpButton>
+            </Show>
+            <Show when="signed-in">
+              <Link href="/dashboard" className="shrink-0 px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm shadow-sm transition-all border border-slate-800">
+                Dashboard →
+              </Link>
+            </Show>
           </div>
         </section>
 
@@ -105,7 +102,7 @@ export default function LandingPage() {
             <h2 id="pricing-heading" className="text-4xl font-bold text-slate-900 mb-4 tracking-tight">
               Get full access.
             </h2>
-            <p className="text-slate-600 text-lg">The Web Platform is exclusively for Pro users.</p>
+            <p className="text-slate-600 text-lg">The local TUI is always free. Pro adds the web layer on top.</p>
           </div>
 
           <article className="bg-slate-900 rounded-3xl p-10 flex flex-col md:flex-row items-center gap-10 shadow-xl relative w-full mb-8">
@@ -113,15 +110,17 @@ export default function LandingPage() {
               <div className="absolute top-0 left-0 bg-sky-500 text-white text-xs font-bold px-4 py-1.5 rounded-br-2xl rounded-tl-3xl uppercase tracking-wider">
                 Pro Web Access
               </div>
-              <h3 className="text-2xl font-bold text-white mt-4 mb-2">Cloud Sync</h3>
+              <h3 className="text-2xl font-bold text-white mt-4 mb-2">Everything the TUI can&apos;t do.</h3>
               <p className="text-slate-400 mb-6">
-                For professionals and teams sharing payloads, rewriting histories, and collaborating online.
+                The local TUI shows you what&apos;s happening. Pro lets you act on it — from anywhere, with your team.
               </p>
-              <ul className="space-y-4 mb-8" aria-label="Pro features">
-                <li className="flex items-center gap-3 text-slate-300">✓ Web Dashboard GUI</li>
-                <li className="flex items-center gap-3 text-slate-300">✓ Cloud Sync</li>
-                <li className="flex items-center gap-3 text-slate-300">✓ Shareable Log Permalinks</li>
-                <li className="flex items-center gap-3 text-slate-300">✓ Advanced Payload Replay</li>
+              <ul className="space-y-3 mb-8" aria-label="Pro features">
+                <li className="flex items-start gap-3 text-slate-300"><span className="text-sky-400 font-bold mt-0.5">✓</span><span><span className="text-white font-medium">Web Dashboard</span> — browse, filter and inspect every call in a full GUI, no terminal needed</span></li>
+                <li className="flex items-start gap-3 text-slate-300"><span className="text-sky-400 font-bold mt-0.5">✓</span><span><span className="text-white font-medium">Cloud Sync</span> — every intercepted request is saved automatically as it happens</span></li>
+                <li className="flex items-start gap-3 text-slate-300"><span className="text-sky-400 font-bold mt-0.5">✓</span><span><span className="text-white font-medium">Shareable Traces</span> — send a permanent link to any call, not a screenshot</span></li>
+                <li className="flex items-start gap-3 text-slate-300"><span className="text-sky-400 font-bold mt-0.5">✓</span><span><span className="text-white font-medium">Edit &amp; Replay</span> — modify any request in the browser and re-fire it without touching Claude</span></li>
+                <li className="flex items-start gap-3 text-slate-300"><span className="text-sky-400 font-bold mt-0.5">✓</span><span><span className="text-white font-medium">Token Analytics</span> — see which tool calls are eating your context window, with cost estimates per model</span></li>
+                <li className="flex items-start gap-3 text-slate-300"><span className="text-sky-400 font-bold mt-0.5">✓</span><span><span className="text-white font-medium">Auto-Redaction &amp; Mock Mode</span> — strip secrets before storage, replay saved responses in CI</span></li>
               </ul>
               <div>
                 <Show when="signed-out">
@@ -154,11 +153,14 @@ export default function LandingPage() {
             </div>
           </article>
           
-          <div className="text-center border border-slate-200 rounded-2xl p-6 bg-slate-50 flex items-center justify-between flex-col md:flex-row gap-4">
-            <p className="text-slate-600">Want the tools for free? Try the local Terminal UI.</p>
-            <a href="https://github.com/gabsalvo/mcpspy.dev" className="py-2.5 px-6 rounded-lg bg-white border border-slate-300 text-slate-700 font-medium hover:text-slate-900 shadow-sm transition-all hover:shadow">
-              Fork on GitHub
-            </a>
+          <div className="border border-slate-200 rounded-2xl p-6 bg-slate-50 flex items-center justify-between flex-col md:flex-row gap-4">
+            <div>
+              <p className="text-slate-700 font-medium">Just want the local TUI? It&apos;s always free.</p>
+              <p className="text-slate-500 text-sm mt-0.5">No account. No config. One command.</p>
+            </div>
+            <div className="bg-black rounded-lg px-4 py-2.5 font-mono text-sm text-sky-400 whitespace-nowrap">
+              npx mcp-spy -t 3001
+            </div>
           </div>
         </section>
 
@@ -166,23 +168,63 @@ export default function LandingPage() {
 
         {/* --- ROADMAP SECTION --- */}
         <section id="roadmap" className="w-full text-left max-w-4xl pt-8" aria-labelledby="roadmap-heading">
-          <h2 id="roadmap-heading" className="text-3xl font-bold text-slate-900 mb-8 tracking-tight">Pro Feature Timeline (2026 Roadmap)</h2>
+          <h2 id="roadmap-heading" className="text-3xl font-bold text-slate-900 mb-8 tracking-tight">What&apos;s shipped &amp; what&apos;s next</h2>
           <div className="space-y-8 pl-4 border-l-2 border-slate-200">
+
             <div className="relative">
-              <div className="absolute -left-6.25 w-4 h-4 bg-sky-500 rounded-full border-4 border-white" />
-              <h3 className="text-xl font-bold text-slate-900 mb-1">Q1: Cloud Sync & Deep Linking</h3>
-              <p className="text-slate-600">Instantly securely sync local SQLite logs to the web. Get a unique URL (mcpspy.dev/log/xyz) to share a specific JSON-RPC conversation with peers to debug hallucinations.</p>
+              <div className="absolute -left-[9px] w-4 h-4 bg-emerald-500 rounded-full border-4 border-white" />
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="text-xl font-bold text-slate-900">Cloud Sync &amp; Real-time Dashboard</h3>
+                <span className="text-xs font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">Shipped</span>
+              </div>
+              <p className="text-slate-600">Every intercepted request syncs to your personal dashboard in real time. Filter by server, inspect payloads with syntax highlighting, and share any trace via a permanent public link.</p>
             </div>
+
             <div className="relative">
-              <div className="absolute -left-6.25 w-4 h-4 bg-slate-300 rounded-full border-4 border-white" />
-              <h3 className="text-xl font-bold text-slate-900 mb-1">Q2: Prompt Injection & Replay Editor</h3>
-              <p className="text-slate-600">Edit the payload you just intercepted (e.g. modify the tool input) and instantly shoot it back to the target server from the dashboard to test error handling without setting up the context with Claude again.</p>
+              <div className="absolute -left-[9px] w-4 h-4 bg-emerald-500 rounded-full border-4 border-white" />
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="text-xl font-bold text-slate-900">Edit &amp; Replay</h3>
+                <span className="text-xs font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">Shipped</span>
+              </div>
+              <p className="text-slate-600">Modify any captured request payload directly in the browser and replay it against your local MCP server instantly — without re-triggering Claude.</p>
             </div>
+
             <div className="relative">
-              <div className="absolute -left-6.25 w-4 h-4 bg-slate-300 rounded-full border-4 border-white" />
-              <h3 className="text-xl font-bold text-slate-900 mb-1">Q3: Advanced Metrics & Schema Diffing</h3>
-              <p className="text-slate-600">Automatic alerts if your server breaks its own JSON Schema response format. Telemetry tracking token usage per tool execution across your team.</p>
+              <div className="absolute -left-[9px] w-4 h-4 bg-emerald-500 rounded-full border-4 border-white" />
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="text-xl font-bold text-slate-900">Token Profiling &amp; Cost Estimation</h3>
+                <span className="text-xs font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">Shipped</span>
+              </div>
+              <p className="text-slate-600">Every log is automatically profiled for token count. See which tool calls are consuming the most context window and get rough cost estimates per method in the dashboard.</p>
             </div>
+
+            <div className="relative">
+              <div className="absolute -left-[9px] w-4 h-4 bg-emerald-500 rounded-full border-4 border-white" />
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="text-xl font-bold text-slate-900">Auto-Redaction, Mock Mode &amp; CI Runner</h3>
+                <span className="text-xs font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">Shipped</span>
+              </div>
+              <p className="text-slate-600">Strip secrets automatically before they hit storage (<code>--redact-pii</code>), return saved responses without touching the real server (<code>--mock</code>), and run regression tests in GitHub Actions (<code>mcp-spy test</code>).</p>
+            </div>
+
+            <div className="relative">
+              <div className="absolute -left-[9px] w-4 h-4 bg-sky-400 rounded-full border-4 border-white" />
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="text-xl font-bold text-slate-900">Session Timeline View</h3>
+                <span className="text-xs font-bold bg-sky-100 text-sky-700 px-2 py-0.5 rounded-full">Coming Q2 2026</span>
+              </div>
+              <p className="text-slate-600">Group all tool calls from a single Claude conversation into a chronological timeline. See the full context of what the AI was doing — not just individual payloads in isolation.</p>
+            </div>
+
+            <div className="relative">
+              <div className="absolute -left-[9px] w-4 h-4 bg-slate-300 rounded-full border-4 border-white" />
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="text-xl font-bold text-slate-900">Schema Diffing &amp; Error Alerts</h3>
+                <span className="text-xs font-bold bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">Coming Q3 2026</span>
+              </div>
+              <p className="text-slate-600">Automatic alerts when your server breaks its own JSON Schema response format. Webhook or email notification when any tool call returns a 5xx — before your users notice.</p>
+            </div>
+
           </div>
         </section>
 
