@@ -1,0 +1,108 @@
+# MCP-Spy Documentation
+> The missing local proxy for the Model Context Protocol.
+
+MCP-Spy is a dedicated observability proxy designed specifically for the Model Context Protocol (MCP). It intercepts JSON-RPC messages between an AI Client (like Claude Desktop or Cursor) and your local MCP Server.
+
+## Features
+- **Zero Config**: Transparent TCP/HTTP proxy intercepting frame-by-frame JSON-RPC 2.0.
+- **Language Agnostic**: Works with Node.js, Python, Go, Rust, or any local process via stdio or HTTP.
+- **Local TUI (Free)**: Observe payloads vividly in your Terminal User Interface. No cloud needed for local debugging.
+- **Web Dashboard (Pro)**: Cloud Sync, shareable permalinks, advanced payload replay editor.
+
+## Getting Started
+
+1. **Install and Run Interceptor:**
+   Run MCP-Spy via npx:
+   
+px mcp-spy --target 3000 --port 3001
+   
+   - --target: The local port where your actual server runs (Default 3000).
+   - --port: The port MCP-spy will listen on to intercept traffic (Default 3001).
+
+2. **Configure AI Client (e.g. Claude Desktop):**
+   Update your claude_desktop_config.json:
+   `json
+   {
+     "mcpServers": {
+       "my-local-server": {
+         "command": "node",
+         "args": ["server.js"],
+         "env": {
+           "PORT": "3001",
+           "MCP_SPY_TARGET": "3000"
+         }
+       }
+     }
+   }
+   `
+
+## Language Setup Examples
+
+### 1. Node.js (TypeScript)
+`	ypescript
+import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+
+const server = new Server({ name: 'weather-tool', version: '1.0.0' });
+await server.connect(new StdioServerTransport());
+// Attach MCP-Spy via npx
+`
+
+### 2. Python
+`python
+import asyncio
+from mcp.server.stdio import stdio_server
+from mcp.server import Server
+
+app = Server('weather-tool')
+
+async def main():
+    async with stdio_server() as (read_stream, write_stream):
+        await app.run(read_stream, write_stream, app.create_initialization_options())
+
+asyncio.run(main())
+`
+
+### 3. Go (mark3labs/mcp-go)
+`go
+package main
+
+import "github.com/mark3labs/mcp-go/server"
+
+func main() {
+    s := server.NewMCPServer("weather-tool", "1.0.0")
+    if err := server.ServeStdio(s); err != nil {
+        panic(err)
+    }
+}
+`
+
+### 4. Rust (mcp-rs)
+`
+ust
+use mcp_rs::server::Server;
+use mcp_rs::transport::stdio::StdioTransport;
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let mut server = Server::new(StdioTransport::new());
+    server.listen().await?;
+    Ok(())
+}
+`
+
+## CLI Reference
+- --target <port>: The real MCP server port.
+- --port <port>: The port AI clients will target instead.
+- --sync <token> (or -s <token>): Pass your Pro subscription API token to activate Cloud Sync and unlock the web dashboard.
+- --verbose: View raw JSON-RPC instead of a summary in TUI.
+
+## Activating Premium Features
+To unlock the web dashboard and Cloud Sync, supply your premium token when starting the proxy:
+```bash
+npx mcp-spy --target 3000 --port 3001 --sync sk_live_your_premium_api_token_here
+```
+Without the token, MCP-Spy operates in Local TUI Mode entirely offline (Free Tier).
+
+## Documentation and Support
+Visit [mcpspy.dev/docs](https://mcpspy.dev/docs) for further integrations with Cursor and enterprise options. View source at [GitHub](https://github.com/gabsalvo/mcpspy.dev).

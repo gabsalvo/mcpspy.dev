@@ -1,15 +1,19 @@
 import type { Metadata } from 'next'
 import { ClerkProvider } from '@clerk/nextjs'
-import { dark } from '@clerk/themes'
-import { Space_Grotesk, JetBrains_Mono } from 'next/font/google'
+import { Lora, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 
-const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-space-grotesk' })
+const lora = Lora({ subsets: ['latin'], variable: '--font-lora' })
 const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains-mono' })
 
 export const metadata: Metadata = {
-  title: 'MCP-Spy Dashboard',
+  title: 'MCP-Spy',
   description: 'The ultimate zero-config local observability proxy for the Model Context Protocol',
+  alternates: {
+    types: {
+      "text/markdown": "/llms.txt",
+    },
+  },
 }
 
 export default function RootLayout({
@@ -19,19 +23,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} font-sans antialiased bg-zinc-950 text-zinc-300`}>
+      <body className={`${lora.variable} ${jetbrainsMono.variable} font-sans antialiased bg-white text-slate-900`}>
         <ClerkProvider
           appearance={{
-            baseTheme: dark,
             variables: {
-              colorPrimary: '#06b6d4',
+              colorPrimary: '#0f172a',
             },
             elements: {
-              cardBox: 'border border-zinc-800 shadow-2xl rounded-2xl bg-zinc-950',
-              socialButtonsBlockButton: 'border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800/80 text-zinc-200',
-              formFieldInput: 'bg-zinc-900/50 border-zinc-800 text-zinc-100 focus:border-cyan-500/50',
-              footerActionLink: 'text-cyan-400 hover:text-cyan-300',
-              userButtonPopoverCard: 'border border-zinc-800 bg-zinc-950',
+              cardBox: 'border border-slate-200 shadow-xl rounded-2xl bg-white',
+              socialButtonsBlockButton: 'border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700',
+              formFieldInput: 'bg-white border-slate-300 text-slate-900 focus:border-slate-900',
+              footerActionLink: 'text-slate-600 hover:text-slate-900',
+              userButtonPopoverCard: 'border border-slate-200 bg-white',
             }
           }}
         >
@@ -41,3 +44,4 @@ export default function RootLayout({
     </html>
   )
 }
+
