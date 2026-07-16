@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Sky, Ocean } from './scene';
-import { NPM_URL, NPM_VERSION } from './links';
+import { NPM_URL } from './links';
 
 const SUN = `      ;   :   ;
    .   \\_,!,_/   ,
@@ -159,9 +159,7 @@ export default function LandingPage() {
             the whole thing is MIT-licensed on{' '}
             <a href="https://github.com/gabsalvo/mcpspy.dev" className="underline underline-offset-4 decoration-muted hover:decoration-ink">github</a>{' '}
             and published on npm as{' '}
-            <a href={NPM_URL} className="underline underline-offset-4 decoration-muted hover:decoration-ink">
-              mcp-spy v{NPM_VERSION}
-            </a>.
+            <a href={NPM_URL} className="underline underline-offset-4 decoration-muted hover:decoration-ink">mcp-spy</a>.
             there is no paid tier, no telemetry, and no cloud — just a tool.
           </p>
           <p className="text-muted text-[0.9rem]">
