@@ -870,6 +870,7 @@ npx mcp-spy --target 3001 --name github`}</CodeBlock>
             </div>
             <div className="flex gap-5">
               <a href="https://github.com/gabsalvo/mcpspy.dev" className="hover:text-ink">github</a>
+              <a href="https://www.npmjs.com/package/mcp-spy" className="hover:text-ink">npm</a>
               <a href="/llms.txt" target="_blank" rel="noopener noreferrer" className="hover:text-ink" title="AI-friendly markdown documentation">llms.txt</a>
               <a href="https://gabsalvo.com" className="sunset-hover text-ink">gabsalvo.com</a>
             </div>

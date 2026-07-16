@@ -130,4 +130,4 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 All logs live in `~/.mcp-spy/mcp_logs.db` (plain SQLite). No accounts, no API keys, no cloud. Delete the file and every trace is gone.
 
 ## Documentation and source
-Full docs at [mcpspy.dev/docs](https://mcpspy.dev/docs). MIT-licensed source at [GitHub](https://github.com/gabsalvo/mcpspy.dev).
+Full docs at [mcpspy.dev/docs](https://mcpspy.dev/docs). MIT-licensed source at [GitHub](https://github.com/gabsalvo/mcpspy.dev). CLI published on npm as [mcp-spy](https://www.npmjs.com/package/mcp-spy).

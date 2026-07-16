@@ -13,6 +13,8 @@ The website and documentation for **mcp-spy** — browser devtools, but for AI t
 
 mcp-spy is a free & open-source observability proxy for the [Model Context Protocol](https://modelcontextprotocol.io). It sits between your AI client (Claude Desktop, Cursor, Windsurf…) and any MCP server, and shows every JSON-RPC message — request, response, duration, status — live in a terminal UI.
 
+The CLI is published on npm as [`mcp-spy`](https://www.npmjs.com/package/mcp-spy):
+
 ```bash
 npx mcp-spy
 ```
