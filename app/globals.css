@@ -122,6 +122,11 @@ html, body {
 
 .drift {
   position: absolute;
+  /* anchor to the left edge: without it these inline elements take their
+     static position from the inherited text-align, which parks them
+     mid-page so they only ever drift across one half of the screen */
+  left: 0;
+  top: 0;
   white-space: pre;
   will-change: transform;
   pointer-events: none;
@@ -147,6 +152,7 @@ html, body {
 
 .packet {
   position: absolute;
+  left: 0; /* see .drift — must not inherit a centred static position */
   white-space: pre;
   font-size: 0.72rem;
   line-height: 1;

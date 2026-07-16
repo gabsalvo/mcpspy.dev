@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Sky, Ocean } from './scene';
+import { NPM_URL, NPM_VERSION } from './links';
 
 const SUN = `      ;   :   ;
    .   \\_,!,_/   ,
@@ -22,7 +23,7 @@ export default function LandingPage() {
         <nav className="w-full flex justify-end items-center gap-5 text-[0.85rem] px-8 pt-6" aria-label="Main Navigation">
           <Link href="/docs" className="text-muted hover:text-ink hover:underline">docs</Link>
           <a href="https://github.com/gabsalvo/mcpspy.dev" className="text-muted hover:text-ink hover:underline">github</a>
-          <a href="https://www.npmjs.com/package/mcp-spy" className="text-muted hover:text-ink hover:underline">npm</a>
+          <a href={NPM_URL} className="text-muted hover:text-ink hover:underline">npm</a>
           <a href="https://gabsalvo.com" className="text-muted hover:text-ink hover:underline">gabsalvo.com</a>
         </nav>
         <Sky>
@@ -61,7 +62,7 @@ export default function LandingPage() {
             <a href="https://github.com/gabsalvo/mcpspy.dev" className="text-muted hover:text-ink underline underline-offset-4 decoration-muted hover:decoration-ink">
               star it on github
             </a>
-            <a href="https://www.npmjs.com/package/mcp-spy" className="text-muted hover:text-ink underline underline-offset-4 decoration-muted hover:decoration-ink">
+            <a href={NPM_URL} className="text-muted hover:text-ink underline underline-offset-4 decoration-muted hover:decoration-ink">
               npm
             </a>
           </div>
@@ -158,7 +159,9 @@ export default function LandingPage() {
             the whole thing is MIT-licensed on{' '}
             <a href="https://github.com/gabsalvo/mcpspy.dev" className="underline underline-offset-4 decoration-muted hover:decoration-ink">github</a>{' '}
             and published on npm as{' '}
-            <a href="https://www.npmjs.com/package/mcp-spy" className="underline underline-offset-4 decoration-muted hover:decoration-ink">mcp-spy</a>.
+            <a href={NPM_URL} className="underline underline-offset-4 decoration-muted hover:decoration-ink">
+              mcp-spy v{NPM_VERSION}
+            </a>.
             there is no paid tier, no telemetry, and no cloud — just a tool.
           </p>
           <p className="text-muted text-[0.9rem]">
@@ -174,7 +177,7 @@ export default function LandingPage() {
           <span className="px-2">&middot;</span>
           <a href="https://github.com/gabsalvo/mcpspy.dev" className="hover:text-ink">github</a>
           <span className="px-2">&middot;</span>
-          <a href="https://www.npmjs.com/package/mcp-spy" className="hover:text-ink">npm</a>
+          <a href={NPM_URL} className="hover:text-ink">npm</a>
         </div>
         <div className="md:text-center">
           built by <a href="https://gabsalvo.com" target="_blank" rel="noopener noreferrer" className="sunset-hover text-ink">gabsalvo.com</a>
