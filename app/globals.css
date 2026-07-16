@@ -118,6 +118,78 @@ html, body {
 }
 @media (max-width: 540px) { .sun-art { font-size: 0.7rem; } }
 
+/* ---- the living scene: birds, drifting MCP traffic, ripples ---- */
+
+.drift {
+  position: absolute;
+  white-space: pre;
+  will-change: transform;
+  pointer-events: none;
+  user-select: none;
+}
+
+.sky-band .drift {
+  font-size: 0.95rem;
+  line-height: 1;
+  color: var(--color-ink);
+}
+
+.ocean-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+  /* fade the middle out so traffic drifts behind the copy, never through it */
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 18%, transparent 34%, transparent 66%, #000 82%, #000 100%);
+          mask-image: linear-gradient(90deg, #000 0%, #000 18%, transparent 34%, transparent 66%, #000 82%, #000 100%);
+}
+
+.packet {
+  position: absolute;
+  white-space: pre;
+  font-size: 0.72rem;
+  line-height: 1;
+  color: var(--color-muted);
+  opacity: 0.55;
+  will-change: transform;
+  pointer-events: none;
+  user-select: none;
+}
+.packet.err { color: var(--color-terracotta); opacity: 0.75; }
+
+.ripple {
+  position: absolute;
+  white-space: pre;
+  font-size: 0.9rem;
+  line-height: 1;
+  color: var(--color-muted);
+  opacity: 0;
+  transition: opacity 3.5s ease-in-out;
+  pointer-events: none;
+  user-select: none;
+}
+.ripple.show { opacity: 0.5; }
+
+/* the periscope rides the swell */
+@keyframes bob {
+  0%, 100% { transform: translateY(0)    rotate(-0.5deg); }
+  50%      { transform: translateY(-4px) rotate(0.5deg); }
+}
+.periscope {
+  animation: bob 5.5s ease-in-out infinite;
+  transform-origin: 50% 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .periscope,
+  .horizon,
+  .wave-divider,
+  .blink::after,
+  .tag.blink::after { animation: none; }
+  .ripple { transition: none; }
+}
+
 /* Blinking cursor for [wip]-style tags */
 @keyframes blink { 50% { opacity: 0; } }
 .blink::after {

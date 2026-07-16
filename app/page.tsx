@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Sky, Ocean } from './scene';
 
 const SUN = `      ;   :   ;
    .   \\_,!,_/   ,
@@ -24,15 +25,18 @@ export default function LandingPage() {
           <a href="https://www.npmjs.com/package/mcp-spy" className="text-muted hover:text-ink hover:underline">npm</a>
           <a href="https://gabsalvo.com" className="text-muted hover:text-ink hover:underline">gabsalvo.com</a>
         </nav>
-        <div className="relative w-full h-14 overflow-hidden" aria-hidden="true">
+        <Sky>
           <pre className="sun-art absolute left-1/2 -bottom-0.5 -translate-x-1/2">{SUN}</pre>
-        </div>
+        </Sky>
         <div className="horizon" role="presentation" />
       </header>
 
       {/* ---- hero ---- */}
       <div className="flex-1 flex flex-col items-center text-center px-5 w-full">
-        <section aria-labelledby="hero-heading" className="w-full max-w-2xl flex flex-col items-center pt-20 pb-4">
+        {/* the periscope watches the traffic drift past */}
+        <div className="relative w-full flex justify-center">
+        <Ocean />
+        <section aria-labelledby="hero-heading" className="relative z-10 w-full max-w-2xl flex flex-col items-center pt-20 pb-4">
           <h1 id="hero-heading" className="text-[1.15rem] font-medium tracking-[0.01em] mb-3">
             mcpspy.dev
           </h1>
@@ -42,7 +46,7 @@ export default function LandingPage() {
             <span className="sunset-text font-medium">free &amp; open source. no account. no cloud.</span>
           </p>
 
-          <pre aria-hidden="true" className="text-ink text-[0.6rem] leading-none mb-8 select-none">{PERISCOPE}</pre>
+          <pre aria-hidden="true" className="periscope text-ink text-[0.6rem] leading-none mb-8 select-none">{PERISCOPE}</pre>
 
           {/* the one command */}
           <div className="w-full max-w-md border border-ink bg-paper text-left px-5 py-4 mb-6">
@@ -62,6 +66,7 @@ export default function LandingPage() {
             </a>
           </div>
         </section>
+        </div>
 
         <div className="wave-divider" role="presentation" />
 
