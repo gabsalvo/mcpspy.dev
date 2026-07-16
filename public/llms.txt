@@ -1,55 +1,77 @@
-# MCP-Spy Documentation
-> The missing local proxy for the Model Context Protocol.
+# mcp-spy Documentation
+> Free & open-source observability proxy for the Model Context Protocol. No account, no cloud, no telemetry.
 
-MCP-Spy is a dedicated observability proxy designed specifically for the Model Context Protocol (MCP). It intercepts JSON-RPC messages between an AI Client (like Claude Desktop or Cursor) and your local MCP Server.
+mcp-spy is a dedicated observability proxy for the Model Context Protocol (MCP). It intercepts JSON-RPC messages between an AI client (like Claude Desktop or Cursor) and your MCP server, and shows them live in a terminal UI. Think browser devtools, but for AI tool calls.
+
+Everything runs on your machine. Logs are stored in a local SQLite database (`~/.mcp-spy/mcp_logs.db`). Nothing ever leaves your computer.
 
 ## Features
-- **Zero Config**: Transparent TCP/HTTP proxy intercepting frame-by-frame JSON-RPC 2.0.
-- **Language Agnostic**: Works with Node.js, Python, Go, Rust, or any local process via stdio or HTTP.
-- **Local TUI (Free)**: Observe payloads vividly in your Terminal User Interface. No cloud needed for local debugging.
-- **Web Dashboard (Pro)**: Cloud Sync, shareable permalinks, advanced payload replay editor.
+- **Zero config**: transparent stdio/HTTP proxy intercepting frame-by-frame JSON-RPC 2.0.
+- **Language agnostic**: works with Node.js, Python, Go, Rust, or any local process via stdio or HTTP.
+- **Live TUI**: full-screen terminal UI with every intercepted call — request, response, duration, status.
+- **Token profiling**: automatic token counts on every payload, session total in the stats bar.
+- **Auto-redaction** (`--redact-pii`): strip AWS keys, bearer tokens, private keys, emails, passwords, and high-entropy tokens from payloads before storage. Proxy traffic is unaffected.
+- **Mock mode** (`--mock`): return saved responses from the local database without forwarding to the real server.
+- **CI test runner** (`mcp-spy test`): replay saved requests against your server and assert valid JSON-RPC responses. Exits 0/1 for pipelines.
+- **cURL export**: press `c` in the TUI to turn any captured call into a runnable curl command.
 
-## Getting Started
+## Quick start
 
-1. **Install and Run Interceptor:**
-   Run MCP-Spy via npx:
-   
-px mcp-spy --target 3000 --port 3001
-   
-   - --target: The local port where your actual server runs (Default 3000).
-   - --port: The port MCP-spy will listen on to intercept traffic (Default 3001).
+```bash
+npx mcp-spy --target 3000
+```
 
-2. **Configure AI Client (e.g. Claude Desktop):**
-   Update your claude_desktop_config.json:
-   `json
-   {
-     "mcpServers": {
-       "my-local-server": {
-         "command": "node",
-         "args": ["server.js"],
-         "env": {
-           "PORT": "3001",
-           "MCP_SPY_TARGET": "3000"
-         }
-       }
-     }
-   }
-   `
+This starts mcp-spy on port 4000 (its default listen port) and forwards traffic to port 3000 where your MCP server runs. Point your AI client at `http://localhost:4000` instead of the server's port.
 
-## Language Setup Examples
+Running `npx mcp-spy` without `--target` opens an interactive guided setup instead.
+
+## Configure an AI client (e.g. Claude Desktop)
+
+Edit `claude_desktop_config.json` (macOS: `~/Library/Application Support/Claude/`, Windows: `%APPDATA%\Claude\`):
+
+```json
+{
+  "mcpServers": {
+    "my-server": {
+      "command": "npx",
+      "args": ["mcp-spy", "--target", "3000"]
+    }
+  }
+}
+```
+
+To wrap a stdio-based server (e.g. the official filesystem MCP), pass the original command after `--`:
+
+```json
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "mcp-spy", "--target", "3000", "--",
+        "npx", "-y", "@modelcontextprotocol/server-filesystem", "/Users/you/Documents"
+      ]
+    }
+  }
+}
+```
+
+The same pattern works for Cursor (Settings → Features → MCP) and Windsurf (`~/.codeium/windsurf/mcp_config.json`).
+
+## Language setup examples
 
 ### 1. Node.js (TypeScript)
-`	ypescript
+```typescript
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 
 const server = new Server({ name: 'weather-tool', version: '1.0.0' });
 await server.connect(new StdioServerTransport());
-// Attach MCP-Spy via npx
-`
+// No changes needed — attach mcp-spy via npx
+```
 
 ### 2. Python
-`python
+```python
 import asyncio
 from mcp.server.stdio import stdio_server
 from mcp.server import Server
@@ -61,10 +83,10 @@ async def main():
         await app.run(read_stream, write_stream, app.create_initialization_options())
 
 asyncio.run(main())
-`
+```
 
 ### 3. Go (mark3labs/mcp-go)
-`go
+```go
 package main
 
 import "github.com/mark3labs/mcp-go/server"
@@ -75,11 +97,10 @@ func main() {
         panic(err)
     }
 }
-`
+```
 
 ### 4. Rust (mcp-rs)
-`
-ust
+```rust
 use mcp_rs::server::Server;
 use mcp_rs::transport::stdio::StdioTransport;
 
@@ -89,20 +110,24 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     server.listen().await?;
     Ok(())
 }
-`
-
-## CLI Reference
-- --target <port>: The real MCP server port.
-- --port <port>: The port AI clients will target instead.
-- --sync <token> (or -s <token>): Pass your Pro subscription API token to activate Cloud Sync and unlock the web dashboard.
-- --verbose: View raw JSON-RPC instead of a summary in TUI.
-
-## Activating Premium Features
-To unlock the web dashboard and Cloud Sync, supply your premium token when starting the proxy:
-```bash
-npx mcp-spy --target 3000 --port 3001 --sync sk_live_your_premium_api_token_here
 ```
-Without the token, MCP-Spy operates in Local TUI Mode entirely offline (Free Tier).
 
-## Documentation and Support
-Visit [mcpspy.dev/docs](https://mcpspy.dev/docs) for further integrations with Cursor and enterprise options. View source at [GitHub](https://github.com/gabsalvo/mcpspy.dev).
+## CLI reference
+- `--target <port>`: **required.** The local port where your actual MCP server runs.
+- `--name <label>`: human-readable label for this server (multi-MCP setups). Default: `port-{n}`.
+- `--redact-pii`: auto-redact secrets from payloads before saving.
+- `--mock`: return saved responses instead of forwarding to the real server.
+- `--no-tui`: plain console output instead of the TUI (useful in CI).
+- `mcp-spy test --target <port> [--method <m>] [--name <label>] [--count <n>] [--timeout <ms>]`: replay saved requests and assert valid responses.
+
+## TUI keyboard shortcuts
+- `↑ / ↓`: navigate log entries
+- `s`: cycle server filter
+- `c`: toggle cURL export for the selected log
+- `q`: quit · `Ctrl+C`: force quit
+
+## Data storage
+All logs live in `~/.mcp-spy/mcp_logs.db` (plain SQLite). No accounts, no API keys, no cloud. Delete the file and every trace is gone.
+
+## Documentation and source
+Full docs at [mcpspy.dev/docs](https://mcpspy.dev/docs). MIT-licensed source at [GitHub](https://github.com/gabsalvo/mcpspy.dev).

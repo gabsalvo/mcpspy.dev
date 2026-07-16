@@ -1,28 +1,147 @@
 @import "tailwindcss";
 
-@theme inline {
-  --font-sans: var(--font-lora), 'Georgia', serif;
-  --font-mono: var(--font-jetbrains-mono), "Courier New", Courier, monospace;
+/*
+  mcpspy.dev — part of the gabsalvo.com / domoroshi.tech family.
+  Paper & ink, JetBrains Mono, ASCII art, sunset accents.
+*/
+
+@theme {
+  --color-paper: #faf8f3;
+  --color-ink: #1a1a1a;
+  --color-muted: #6b6b6b;
+  --color-faint: #8a8a8a;
+  --color-codebg: #f0ede5;
+  --color-sand: #f0d6a8;
+  --color-apricot: #e9a472;
+  --color-flame: #e8762e;
+  --color-terracotta: #b9532f;
+  --color-bordeaux: #a82b3d;
+  --color-ember: #6a2418;
+
+  --font-sans: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+html, body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-size: 15px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-sand);
+  color: var(--color-ink);
 }
 
 @layer utilities {
-  .neon-border {
-    box-shadow: 0 0 1px 1px rgba(6, 182, 212, 0.4), 0 0 10px 2px rgba(6, 182, 212, 0.2);
-    border-color: rgba(6, 182, 212, 0.8);
+  /* Sunset gradient text (the family signature) */
+  .sunset-text {
+    background: linear-gradient(90deg, #f0d6a8 0%, #e9a472 55%, #b9532f 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
   }
 
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
+  .sunset-hover:hover, .sunset-hover:focus-visible {
+    background: linear-gradient(90deg, #f0d6a8 0%, #e9a472 55%, #b9532f 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    text-decoration: none;
   }
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
+
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 }
 
-/* Custom JSON syntax highlighting theme colors */
-.json-key { color: #7dd3fc; } /* cyan-300 */
-.json-string { color: #a7f3d0; } /* emerald-300 */
-.json-number { color: #fde047; } /* emerald-300 to yellow-300 */
-.json-boolean { color: #c084fc; } /* sky-400 to purple-400 */
-.json-null { color: #94a3b8; } /* slate-400 */
+/* Undulating horizon line, straight from gabsalvo.com */
+@keyframes undulate {
+  0%   { -webkit-mask-position: 0 0;     mask-position: 0 0; }
+  100% { -webkit-mask-position: -20px 0; mask-position: -20px 0; }
+}
+
+.horizon {
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    #1a1a1a 0%, #1a1a1a 28%,
+    #6a2418 38%, #b9532f 45%,
+    #e8762e 48%, #f1b66b 50%,
+    #e8762e 52%, #b9532f 55%,
+    #6a2418 62%, #1a1a1a 72%, #1a1a1a 100%
+  );
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='4' viewBox='0 0 20 4'%3E%3Cpath d='M0 2 Q 5 4 10 2 T 20 2' fill='none' stroke='black' stroke-width='1.5'/%3E%3C/svg%3E");
+          mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='4' viewBox='0 0 20 4'%3E%3Cpath d='M0 2 Q 5 4 10 2 T 20 2' fill='none' stroke='black' stroke-width='1.5'/%3E%3C/svg%3E");
+  -webkit-mask-repeat: repeat-x;
+          mask-repeat: repeat-x;
+  animation: undulate 2s linear infinite;
+}
+
+.wave-divider {
+  width: 60%;
+  max-width: 320px;
+  height: 4px;
+  margin: 3.5rem auto;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    #b9532f 30%,
+    #e8762e 50%,
+    #b9532f 70%,
+    transparent 100%
+  );
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='4' viewBox='0 0 20 4'%3E%3Cpath d='M0 2 Q 5 4 10 2 T 20 2' fill='none' stroke='black' stroke-width='1.5'/%3E%3C/svg%3E");
+          mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='4' viewBox='0 0 20 4'%3E%3Cpath d='M0 2 Q 5 4 10 2 T 20 2' fill='none' stroke='black' stroke-width='1.5'/%3E%3C/svg%3E");
+  -webkit-mask-repeat: repeat-x;
+          mask-repeat: repeat-x;
+  animation: undulate 2s linear infinite;
+  opacity: 0.7;
+}
+
+/* Setting sun, gradient-clipped like the family sites */
+.sun-art {
+  white-space: pre;
+  font-size: 0.85rem;
+  line-height: 1;
+  background: linear-gradient(180deg, #f0d6a8 0%, #e9a472 55%, #b9532f 100%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+  pointer-events: none;
+  user-select: none;
+}
+@media (max-width: 540px) { .sun-art { font-size: 0.7rem; } }
+
+/* Blinking cursor for [wip]-style tags */
+@keyframes blink { 50% { opacity: 0; } }
+.blink::after {
+  content: "_";
+  display: inline-block;
+  margin-left: 0.15em;
+  animation: blink 1.1s steps(1) infinite;
+}
+
+/* Status tags, borrowed from the gabsalvo.com project list */
+.tag {
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: lowercase;
+  padding: 0.1rem 0.5rem;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+/* JSON syntax highlighting on paper */
+.json-key { color: #1a1a1a; font-weight: 600; }
+.json-string { color: #b9532f; }
+.json-number { color: #a82b3d; }
+.json-boolean { color: #e8762e; font-weight: 600; }
+.json-null { color: #8a8a8a; font-style: italic; }

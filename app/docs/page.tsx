@@ -1,274 +1,260 @@
 import Link from 'next/link';
-import { ArrowLeft, BookOpen, Terminal, Zap, Shield, Code, Cpu, Settings, ExternalLink, Eye, RefreshCw, Share2, Users, Search, AlertTriangle, Keyboard, Lock, Coins, Download, FlaskConical, Play } from 'lucide-react';
 import { CopyAsMarkdownButton } from './CopyAsMarkdownButton';
+
+/* ---- tiny building blocks, family style ---- */
+
+function SectionHeading({ id, children }: { id?: string; children: React.ReactNode }) {
+  return (
+    <h2 id={id} className="scroll-mt-24 text-[1.2rem] font-medium mt-0 mb-4">
+      {children}
+    </h2>
+  );
+}
+
+function SubHeading({ children }: { children: React.ReactNode }) {
+  return <h3 className="text-[1rem] font-medium text-ink mt-10 mb-3">{children}</h3>;
+}
+
+function CodeBlock({ label, children }: { label?: string; children: string }) {
+  return (
+    <div className="my-5">
+      {label && <div className="text-[0.75rem] text-muted mb-1.5">{label}</div>}
+      <pre className="bg-codebg border-l-2 border-terracotta px-4 py-3.5 overflow-x-auto text-[0.85rem] leading-normal m-0">
+        <code>{children}</code>
+      </pre>
+    </div>
+  );
+}
+
+function Callout({ title, children }: { title?: string; children: React.ReactNode }) {
+  return (
+    <blockquote className="border-l-2 border-terracotta my-5 py-1 pl-4 text-muted text-[0.9rem]">
+      {title && <span className="text-ink font-medium not-italic">{title} — </span>}
+      {children}
+    </blockquote>
+  );
+}
+
+function Divider() {
+  return <div className="wave-divider !mx-0 !max-w-[200px]" role="presentation" />;
+}
+
+const NAV = [
+  ['getting started', [
+    ['#introduction', 'what is mcp-spy?'],
+    ['#who-is-this-for', 'who is this for?'],
+    ['#how-it-works', 'how it works'],
+    ['#quick-start', 'quick start'],
+  ]],
+  ['use cases', [
+    ['#existing-mcps', 'using with any MCP server'],
+    ['#debugging', 'debugging common errors'],
+    ['#building-mcps', 'building your own MCP'],
+  ]],
+  ['integrations', [
+    ['#claude-desktop', 'claude desktop'],
+    ['#cursor', 'cursor'],
+    ['#windsurf', 'windsurf'],
+    ['#other-clients', 'other MCP clients'],
+  ]],
+  ['features', [
+    ['#redaction', 'auto-redaction'],
+    ['#tokens', 'token profiling'],
+    ['#export', 'cURL export'],
+    ['#mock', 'mock mode'],
+    ['#ci-runner', 'CI/CD test runner'],
+  ]],
+  ['server examples', [
+    ['#example-nodejs', 'node.js / typescript'],
+    ['#example-python', 'python'],
+    ['#example-go', 'go'],
+    ['#example-rust', 'rust'],
+  ]],
+  ['reference', [
+    ['#tui-shortcuts', 'TUI & keyboard shortcuts'],
+    ['#cli-reference', 'CLI commands'],
+    ['#data-storage', 'data storage'],
+  ]],
+] as const;
 
 export default function DocsPage() {
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row">
+    <div className="min-h-screen bg-paper text-ink flex flex-col md:flex-row">
       <CopyAsMarkdownButton />
-      <div className="md:hidden bg-white border-b border-slate-200 p-4 sticky top-0 z-30 flex items-center justify-between">
-        <Link href="/" className="font-bold text-slate-900 flex items-center gap-2">
-          <ArrowLeft className="w-4 h-4" /> Back
-        </Link>
-        <span className="font-semibold text-slate-600">Documentation</span>
+
+      {/* mobile top bar */}
+      <div className="md:hidden bg-paper border-b border-ink/10 p-4 sticky top-0 z-30 flex items-center justify-between text-[0.85rem]">
+        <Link href="/" className="text-muted hover:text-ink">← mcpspy.dev</Link>
+        <span className="text-muted">docs</span>
       </div>
 
-      <aside className="w-full md:w-64 lg:w-72 bg-white border-r border-slate-200 h-auto md:h-screen md:sticky md:top-0 overflow-y-auto hidden md:block shrink-0">
+      {/* sidebar */}
+      <aside className="w-full md:w-60 lg:w-64 border-r border-ink/10 h-auto md:h-screen md:sticky md:top-0 overflow-y-auto hidden md:block shrink-0 scrollbar-hide">
         <div className="p-6">
-          <Link href="/" className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors font-medium mb-10">
-            <ArrowLeft className="w-4 h-4" /> Back to Home
-          </Link>
-
-          <nav className="space-y-8">
-            <div>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 ml-2">Getting Started</h3>
-              <ul className="space-y-1">
-                <li><a href="#introduction" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors">What is MCP-Spy?</a></li>
-                <li><a href="#who-is-this-for" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors">Who is this for?</a></li>
-                <li><a href="#how-it-works" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors">How it works</a></li>
-                <li><a href="#quick-start" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors">Quick Start</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 ml-2">Use Cases</h3>
-              <ul className="space-y-1">
-                <li><a href="#existing-mcps" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors">Using with any MCP server</a></li>
-                <li><a href="#debugging" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors">Debugging common errors</a></li>
-                <li><a href="#building-mcps" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors">Building your own MCP</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 ml-2">Integrations</h3>
-              <ul className="space-y-1">
-                <li><a href="#claude-desktop" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors">Claude Desktop</a></li>
-                <li><a href="#cursor" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors">Cursor</a></li>
-                <li><a href="#windsurf" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors">Windsurf</a></li>
-                <li><a href="#other-clients" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors">Other MCP clients</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 ml-2">Pro Features</h3>
-              <ul className="space-y-1">
-                <li><a href="#cloud-sync" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors flex items-center justify-between">Cloud Sync <span className="text-[10px] bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded font-bold uppercase">Pro</span></a></li>
-                <li><a href="#edit-replay" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors flex items-center justify-between">Edit & Replay <span className="text-[10px] bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded font-bold uppercase">Pro</span></a></li>
-                <li><a href="#share-trace" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors flex items-center justify-between">Share Trace <span className="text-[10px] bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded font-bold uppercase">Pro</span></a></li>
-                <li><a href="#redaction" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors flex items-center justify-between">Auto-Redaction <span className="text-[10px] bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded font-bold uppercase">Pro</span></a></li>
-                <li><a href="#tokens" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors flex items-center justify-between">Token Profiling <span className="text-[10px] bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded font-bold uppercase">Pro</span></a></li>
-                <li><a href="#export" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors flex items-center justify-between">Export (cURL / Postman) <span className="text-[10px] bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded font-bold uppercase">Pro</span></a></li>
-                <li><a href="#mock" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors flex items-center justify-between">Auto-Mock Mode <span className="text-[10px] bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded font-bold uppercase">Pro</span></a></li>
-                <li><a href="#ci-runner" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors flex items-center justify-between">CI/CD Test Runner <span className="text-[10px] bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded font-bold uppercase">Pro</span></a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 ml-2">Server Examples</h3>
-              <ul className="space-y-1">
-                <li><a href="#example-nodejs" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors">Node.js / TypeScript</a></li>
-                <li><a href="#example-python" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors">Python</a></li>
-                <li><a href="#example-go" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors">Go</a></li>
-                <li><a href="#example-rust" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors">Rust</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 ml-2">Reference</h3>
-              <ul className="space-y-1">
-                <li><a href="#tui-shortcuts" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors">TUI Keyboard Shortcuts</a></li>
-                <li><a href="#cli-reference" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors">CLI Commands</a></li>
-                <li><a href="#data-storage" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors">Data Storage</a></li>
-                <li><a href="#activating-premium-features" className="block px-2 py-1.5 text-sm text-slate-700 hover:text-sky-600 hover:bg-sky-50 rounded-md font-medium transition-colors">Premium Activation</a></li>
-              </ul>
-            </div>
+          <Link href="/" className="text-muted hover:text-ink text-[0.85rem] block mb-8">← mcpspy.dev</Link>
+          <nav className="space-y-7">
+            {NAV.map(([group, items]) => (
+              <div key={group}>
+                <h3 className="text-[0.7rem] font-medium uppercase tracking-[0.18em] text-muted mb-2">{group}</h3>
+                <ul className="space-y-1 list-none p-0 m-0">
+                  {items.map(([href, label]) => (
+                    <li key={href}>
+                      <a href={href} className="block text-[0.85rem] text-ink/80 hover:text-ink hover:underline underline-offset-4">
+                        {label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </nav>
         </div>
       </aside>
 
-      <main className="flex-1 bg-white relative">
-        <div className="max-w-4xl mx-auto px-6 py-12 md:py-20 lg:px-12">
+      {/* main */}
+      <main className="flex-1 min-w-0">
+        <div className="max-w-[78ch] mx-auto px-5 py-12 md:py-16 lg:px-10 text-[0.95rem] leading-[1.7]">
 
-          <div className="mb-16">
-            <div className="inline-block px-3 py-1 mb-4 rounded-full bg-slate-100 border border-slate-200 text-slate-600 text-xs font-bold uppercase tracking-widest">Documentation v1.0</div>
-            <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-4">MCP-Spy Docs</h1>
-            <p className="text-xl text-slate-600 leading-relaxed font-light">
-              A complete guide to inspecting, debugging, and understanding everything that happens between your AI assistant and its tools — whether you built those tools or not.
+          <div className="mb-14">
+            <div className="sun-art text-[0.6rem] mb-6" aria-hidden="true">{`      ;   :   ;
+   .   \\_,!,_/   ,
+    \`.,'     \`.,'
+     /         \\    `}</div>
+            <h1 className="text-[1.6rem] font-medium tracking-tight mb-3">mcp-spy documentation</h1>
+            <p className="text-muted m-0">
+              a complete guide to inspecting, debugging, and understanding everything that happens
+              between your AI assistant and its tools — whether you built those tools or not.
+              free &amp; open source, forever.
             </p>
           </div>
 
-          <div className="prose prose-slate prose-lg max-w-none">
+          {/* INTRODUCTION */}
+          <section id="introduction" className="scroll-mt-24 mb-16">
+            <SectionHeading>what is mcp-spy?</SectionHeading>
+            <p className="mb-4">
+              the <strong className="font-medium">Model Context Protocol (MCP)</strong> is the standard that lets AI
+              assistants like claude call external tools — reading files, querying databases, searching the web,
+              running code, and much more. every time claude uses a tool, it sends a structured message behind the
+              scenes. mcp-spy lets you see those messages.
+            </p>
+            <p className="mb-4">
+              think of it like browser devtools, but for AI tool calls. you see the exact request the AI made, the
+              exact response it got back, how long it took, and whether it succeeded or failed. no guessing, no
+              black boxes.
+            </p>
+            <Callout title="why does this matter?">
+              when an AI tool call fails or gives wrong results, it is nearly impossible to diagnose without seeing
+              the raw data. was the AI&apos;s request malformed? did the tool return bad data? did it time out?
+              mcp-spy answers all of these questions instantly.
+            </Callout>
+          </section>
 
-            {/* INTRODUCTION */}
-            <section id="introduction" className="scroll-mt-32 mb-24 border-t border-slate-100 pt-16">
-              <div className="flex items-center gap-3 mb-6">
-                <BookOpen className="w-8 h-8 text-sky-500" />
-                <h2 className="text-3xl font-bold text-slate-900 m-0">What is MCP-Spy?</h2>
-              </div>
-              <p>
-                The <strong>Model Context Protocol (MCP)</strong> is the standard that lets AI assistants like Claude call external tools — reading files, querying databases, searching the web, running code, and much more. Every time Claude uses a tool, it sends a structured message behind the scenes. MCP-Spy lets you see those messages.
-              </p>
-              <p>
-                Think of it like browser DevTools, but for AI tool calls. You see the exact request the AI made, the exact response it got back, how long it took, and whether it succeeded or failed. No guessing, no black boxes.
-              </p>
-              <div className="bg-sky-50 border border-sky-100 rounded-xl p-6 my-8">
-                <h4 className="flex items-center gap-2 text-sky-900 mt-0 mb-3 font-bold text-base"><Zap className="w-5 h-5 fill-sky-200" /> Why does this matter?</h4>
-                <p className="text-sky-800 m-0 text-base">
-                  When an AI tool call fails or gives wrong results, it is nearly impossible to diagnose without seeing the raw data. Was the AI&apos;s request malformed? Did the tool return bad data? Did it time out? MCP-Spy answers all of these questions instantly.
-                </p>
-              </div>
-            </section>
+          <Divider />
 
-            {/* WHO IS THIS FOR */}
-            <section id="who-is-this-for" className="scroll-mt-32 mb-24 border-t border-slate-100 pt-16">
-              <div className="flex items-center gap-3 mb-6">
-                <Users className="w-8 h-8 text-violet-500" />
-                <h2 className="text-3xl font-bold text-slate-900 m-0">Who is this for?</h2>
-              </div>
-              <p className="text-slate-600">MCP-Spy is useful in three different situations, even if you have never written a line of code in your life.</p>
-
-              <div className="grid md:grid-cols-3 gap-5 mt-8 not-prose">
-                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center mb-4">
-                    <Eye className="w-5 h-5 text-emerald-600" />
-                  </div>
-                  <h4 className="font-bold text-slate-900 mb-2">AI Power Users</h4>
-                  <p className="text-sm text-slate-500 leading-relaxed">You use Claude Desktop or Cursor with MCP servers like the filesystem MCP, GitHub MCP, or Slack MCP — but you don&apos;t write code. MCP-Spy lets you see exactly what your AI assistant is doing with those tools in real time.</p>
-                </div>
-                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                  <div className="w-10 h-10 rounded-xl bg-sky-100 flex items-center justify-center mb-4">
-                    <Code className="w-5 h-5 text-sky-600" />
-                  </div>
-                  <h4 className="font-bold text-slate-900 mb-2">MCP Developers</h4>
-                  <p className="text-sm text-slate-500 leading-relaxed">You are building an MCP server and need to inspect payloads, reproduce bugs, test edge cases, and iterate fast. MCP-Spy is your primary debugging tool during development.</p>
-                </div>
-                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                  <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center mb-4">
-                    <Shield className="w-5 h-5 text-amber-600" />
-                  </div>
-                  <h4 className="font-bold text-slate-900 mb-2">Teams & Auditors</h4>
-                  <p className="text-sm text-slate-500 leading-relaxed">You need a log of every AI tool call for compliance, security review, or team debugging. Cloud Sync gives you a persistent, shareable record of all MCP activity.</p>
-                </div>
-              </div>
-            </section>
-
-            {/* HOW IT WORKS */}
-            <section id="how-it-works" className="scroll-mt-32 mb-24 border-t border-slate-100 pt-16">
-              <div className="flex items-center gap-3 mb-6">
-                <Cpu className="w-8 h-8 text-indigo-500" />
-                <h2 className="text-3xl font-bold text-slate-900 m-0">How it works</h2>
-              </div>
-              <p>
-                MCP-Spy is a <strong>transparent proxy</strong>. It sits between your AI client (Claude, Cursor, etc.) and the MCP server, intercepting every message in both directions without changing anything about how either side works.
-              </p>
-              <p>
-                You do not need to modify the MCP server. You do not need to change the AI client. You just insert MCP-Spy in the middle by telling your AI client to talk to MCP-Spy&apos;s port instead of the server&apos;s port directly.
-              </p>
-              <div className="grid md:grid-cols-3 gap-6 my-10 not-prose">
-                <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm text-center">
-                  <div className="text-2xl mb-3">🤖</div>
-                  <h4 className="font-bold text-slate-900 mb-2">AI Client</h4>
-                  <p className="text-sm text-slate-500">Claude, Cursor, Windsurf, or any MCP-compatible app sends a tool call.</p>
-                </div>
-                <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl text-center relative">
-                  <div className="absolute -top-3 -right-3 w-6 h-6 bg-emerald-500 rounded-full border-4 border-white animate-pulse"></div>
-                  <div className="text-2xl mb-3">🔍</div>
-                  <h4 className="font-bold text-white mb-2">MCP-Spy</h4>
-                  <p className="text-sm text-slate-400">Intercepts the message, logs it, then forwards it unchanged to the real server.</p>
-                </div>
-                <div className="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm text-center">
-                  <div className="text-2xl mb-3">🛠️</div>
-                  <h4 className="font-bold text-slate-900 mb-2">MCP Server</h4>
-                  <p className="text-sm text-slate-500">Any MCP server — filesystem, GitHub, Slack, or one you built yourself. It never knows MCP-Spy is there.</p>
-                </div>
-              </div>
-              <p className="text-slate-500 text-sm text-center italic">MCP-Spy is invisible to both sides. It only observes.</p>
-            </section>
-
-            {/* QUICK START */}
-            <section id="quick-start" className="scroll-mt-32 mb-24 border-t border-slate-100 pt-16">
-              <div className="flex items-center gap-3 mb-6">
-                <Terminal className="w-8 h-8 text-emerald-500" />
-                <h2 className="text-3xl font-bold text-slate-900 m-0">Quick Start</h2>
-              </div>
-              <p>No installation needed. Run MCP-Spy with <code>npx</code> directly:</p>
-
-              <div className="bg-slate-900 rounded-xl p-4 my-6 shadow-lg overflow-x-auto border border-slate-800">
-                <pre className="text-emerald-400 font-mono text-sm m-0"><code>npx mcp-spy --target 3000</code></pre>
-              </div>
-
-              <p>This starts MCP-Spy on port <code>4000</code> (its default listen port) and forwards traffic to port <code>3000</code> where your MCP server is running. Then tell your AI client to connect to <code>http://localhost:4000</code> instead.</p>
-
-              <ul className="space-y-4 list-none pl-0 mt-8">
-                <li className="flex gap-4">
-                  <span className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-500 text-sm">1</span>
-                  <div className="pt-1">Your MCP server is already running on some port (e.g. <code>3000</code>).</div>
+          {/* WHO IS THIS FOR */}
+          <section id="who-is-this-for" className="scroll-mt-24 mb-16">
+            <SectionHeading>who is this for?</SectionHeading>
+            <p className="text-muted mb-6">mcp-spy is useful in three different situations, even if you have never written a line of code in your life.</p>
+            <ul className="list-none p-0 m-0">
+              {[
+                ['AI power users', "you use claude desktop or cursor with MCP servers like the filesystem MCP, github MCP, or slack MCP — but you don't write code. mcp-spy lets you see exactly what your AI assistant is doing with those tools in real time."],
+                ['MCP developers', 'you are building an MCP server and need to inspect payloads, reproduce bugs, test edge cases, and iterate fast. mcp-spy is your primary debugging tool during development.'],
+                ['the security-curious', 'you want an audit trail of every tool call an AI makes on your machine. mcp-spy logs everything locally, so you can review exactly what was read, written, and sent.'],
+              ].map(([name, desc]) => (
+                <li key={name} className="py-3.5 border-b border-dashed border-ink/10 last:border-b-0">
+                  <span className="font-medium">{name}</span>
+                  <p className="mt-1.5 mb-0 text-muted text-[0.9rem]">{desc}</p>
                 </li>
-                <li className="flex gap-4">
-                  <span className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-500 text-sm">2</span>
-                  <div className="pt-1">Run <code>npx mcp-spy --target 3000</code> in your terminal. MCP-Spy starts listening on <code>4000</code>.</div>
+              ))}
+            </ul>
+          </section>
+
+          <Divider />
+
+          {/* HOW IT WORKS */}
+          <section id="how-it-works" className="scroll-mt-24 mb-16">
+            <SectionHeading>how it works</SectionHeading>
+            <p className="mb-4">
+              mcp-spy is a <strong className="font-medium">transparent proxy</strong>. it sits between your AI client
+              (claude, cursor, etc.) and the MCP server, intercepting every message in both directions without
+              changing anything about how either side works.
+            </p>
+            <p className="mb-4">
+              you do not need to modify the MCP server. you do not need to change the AI client. you just insert
+              mcp-spy in the middle by telling your AI client to talk to mcp-spy&apos;s port instead of the
+              server&apos;s port directly.
+            </p>
+            <pre aria-hidden="true" className="text-[0.75rem] sm:text-[0.85rem] leading-relaxed text-muted overflow-x-auto py-4 text-center">{`ai client ────► mcp-spy ────► mcp server
+ (claude)      (logs it)      (unchanged)`}</pre>
+            <p className="text-muted text-[0.9rem] italic text-center">mcp-spy is invisible to both sides. it only observes.</p>
+          </section>
+
+          <Divider />
+
+          {/* QUICK START */}
+          <section id="quick-start" className="scroll-mt-24 mb-16">
+            <SectionHeading>quick start</SectionHeading>
+            <p>no installation needed. run mcp-spy with <code className="bg-codebg px-1.5 py-0.5 text-[0.88em]">npx</code> directly:</p>
+            <CodeBlock>{`npx mcp-spy --target 3000`}</CodeBlock>
+            <p className="mb-6">
+              this starts mcp-spy on port <code className="bg-codebg px-1.5 py-0.5 text-[0.88em]">4000</code> (its default
+              listen port) and forwards traffic to port <code className="bg-codebg px-1.5 py-0.5 text-[0.88em]">3000</code> where
+              your MCP server is running. then tell your AI client to connect to{' '}
+              <code className="bg-codebg px-1.5 py-0.5 text-[0.88em]">http://localhost:4000</code> instead.
+            </p>
+            <ol className="list-none p-0 m-0 space-y-3">
+              {[
+                ['1', 'your MCP server is already running on some port (e.g. 3000).'],
+                ['2', 'run npx mcp-spy --target 3000 in your terminal. mcp-spy starts listening on 4000.'],
+                ['3', 'update your AI client config to point to http://localhost:4000 instead of 3000.'],
+                ['4', 'the TUI opens in your terminal. every tool call appears in real time — request, response, duration, status code.'],
+              ].map(([n, step]) => (
+                <li key={n} className="flex gap-4">
+                  <span className="shrink-0 w-7 h-7 border border-ink/20 flex items-center justify-center text-[0.8rem] text-muted">{n}</span>
+                  <span className={`pt-0.5 ${n === '4' ? 'font-medium' : ''}`}>{step}</span>
                 </li>
-                <li className="flex gap-4">
-                  <span className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-500 text-sm">3</span>
-                  <div className="pt-1">Update your AI client config to point to <code>http://localhost:4000</code> instead of <code>3000</code>.</div>
-                </li>
-                <li className="flex gap-4">
-                  <span className="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center font-bold text-emerald-700 text-sm">4</span>
-                  <div className="pt-1 font-medium text-slate-900">The TUI opens in your terminal. Every tool call appears in real time — request, response, duration, status code.</div>
-                </li>
-              </ul>
-            </section>
+              ))}
+            </ol>
+          </section>
 
-            {/* USING WITH EXISTING MCPs */}
-            <section id="existing-mcps" className="scroll-mt-32 mb-24 border-t border-slate-100 pt-16">
-              <div className="flex items-center gap-3 mb-6">
-                <Search className="w-8 h-8 text-teal-500" />
-                <h2 className="text-3xl font-bold text-slate-900 m-0">Using with any MCP server</h2>
-              </div>
-              <p>
-                You do <strong>not</strong> need to build an MCP server to use MCP-Spy. It works with any existing MCP server — including all the popular ones that the community and Anthropic provide out of the box.
-              </p>
-              <p>
-                Common examples include the <strong>filesystem MCP</strong> (lets Claude read and write your local files), the <strong>GitHub MCP</strong> (lets Claude interact with your repos), the <strong>Slack MCP</strong> (lets Claude read and send messages), and many others.
-              </p>
+          <Divider />
 
-              <div className="bg-amber-50 border border-amber-100 rounded-xl p-5 my-6">
-                <h4 className="text-amber-900 font-bold mt-0 mb-2 text-base">The core idea</h4>
-                <p className="text-amber-800 m-0 text-sm">
-                  Instead of telling Claude Desktop to run <code>npx @modelcontextprotocol/server-filesystem /Users/you</code> directly, you tell it to run MCP-Spy, and MCP-Spy wraps that command for you. You don&apos;t change the MCP server at all — you just add MCP-Spy in front of it.
-                </p>
-              </div>
+          {/* USING WITH EXISTING MCPs */}
+          <section id="existing-mcps" className="scroll-mt-24 mb-16">
+            <SectionHeading>using with any MCP server</SectionHeading>
+            <p className="mb-4">
+              you do <strong className="font-medium">not</strong> need to build an MCP server to use mcp-spy. it works
+              with any existing MCP server — including all the popular ones that the community and anthropic provide
+              out of the box.
+            </p>
+            <p className="mb-4">
+              common examples include the <strong className="font-medium">filesystem MCP</strong> (lets claude read and
+              write your local files), the <strong className="font-medium">github MCP</strong> (lets claude interact
+              with your repos), the <strong className="font-medium">slack MCP</strong> (lets claude read and send
+              messages), and many others.
+            </p>
+            <Callout title="the core idea">
+              instead of telling claude desktop to run <code className="text-[0.88em]">npx @modelcontextprotocol/server-filesystem /Users/you</code> directly,
+              you tell it to run mcp-spy, and mcp-spy wraps that command for you. you don&apos;t change the MCP
+              server at all — you just add mcp-spy in front of it.
+            </Callout>
 
-              <h3 className="text-xl font-bold text-slate-900 mt-10 mb-4">Example: Wrapping the Filesystem MCP</h3>
-              <p>Normally your <code>claude_desktop_config.json</code> might look like this:</p>
-
-              <div className="bg-slate-900 rounded-2xl p-6 shadow-xl overflow-x-auto border border-slate-800 mt-4 mb-6 relative">
-                <div className="absolute top-0 left-0 w-full h-8 bg-slate-800/50 border-b border-slate-700/50 flex items-center px-4 gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-400/80"></div>
-                  <div className="w-3 h-3 rounded-full bg-amber-400/80"></div>
-                  <div className="w-3 h-3 rounded-full bg-emerald-400/80"></div>
-                  <span className="ml-2 text-xs font-mono text-slate-400">Before — without MCP-Spy</span>
-                </div>
-<pre className="text-slate-300 font-mono text-sm mt-6 mb-0 bg-transparent"><code>{`{
+            <SubHeading>example: wrapping the filesystem MCP</SubHeading>
+            <p>normally your <code className="bg-codebg px-1.5 py-0.5 text-[0.88em]">claude_desktop_config.json</code> might look like this:</p>
+            <CodeBlock label="before — without mcp-spy">{`{
   "mcpServers": {
     "filesystem": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/you/Documents"]
     }
   }
-}`}</code></pre>
-              </div>
-
-              <p>To add MCP-Spy, you wrap that command with <code>mcp-spy --target</code>, but since this MCP uses <code>stdio</code> (not HTTP), you use the <code>--wrap</code> mode by passing the original command as the target:</p>
-
-              <div className="bg-slate-900 rounded-2xl p-6 shadow-xl overflow-x-auto border border-slate-800 mt-4 mb-2 relative">
-                <div className="absolute top-0 left-0 w-full h-8 bg-slate-800/50 border-b border-slate-700/50 flex items-center px-4 gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-400/80"></div>
-                  <div className="w-3 h-3 rounded-full bg-amber-400/80"></div>
-                  <div className="w-3 h-3 rounded-full bg-emerald-400/80"></div>
-                  <span className="ml-2 text-xs font-mono text-slate-400">After — with MCP-Spy wrapping it</span>
-                </div>
-<pre className="text-slate-300 font-mono text-sm mt-6 mb-0 bg-transparent"><code>{`{
+}`}</CodeBlock>
+            <p>
+              to add mcp-spy, you wrap that command with <code className="bg-codebg px-1.5 py-0.5 text-[0.88em]">mcp-spy --target</code>,
+              but since this MCP uses <code className="bg-codebg px-1.5 py-0.5 text-[0.88em]">stdio</code> (not HTTP), you use
+              the wrap mode by passing the original command as the target:
+            </p>
+            <CodeBlock label="after — with mcp-spy wrapping it">{`{
   "mcpServers": {
     "filesystem": {
       "command": "npx",
@@ -280,130 +266,129 @@ export default function DocsPage() {
       ]
     }
   }
-}`}</code></pre>
-              </div>
-              <p className="text-sm text-slate-500 mt-2">MCP-Spy starts the real MCP server as a child process and intercepts all stdio communication. Nothing changes for Claude — it still gets the same responses, but now you can see every call.</p>
+}`}</CodeBlock>
+            <p className="text-muted text-[0.88rem]">
+              mcp-spy starts the real MCP server as a child process and intercepts all stdio communication. nothing
+              changes for claude — it still gets the same responses, but now you can see every call.
+            </p>
 
-              <h3 className="text-xl font-bold text-slate-900 mt-10 mb-4">Other popular MCP servers you can wrap</h3>
-              <div className="grid sm:grid-cols-2 gap-4 not-prose mt-4">
-                {[
-                  { name: 'GitHub MCP', pkg: '@modelcontextprotocol/server-github', desc: 'Read repos, issues, PRs, and code.' },
-                  { name: 'Filesystem MCP', pkg: '@modelcontextprotocol/server-filesystem', desc: 'Read and write local files.' },
-                  { name: 'Slack MCP', pkg: '@modelcontextprotocol/server-slack', desc: 'Read channels, send messages.' },
-                  { name: 'Brave Search MCP', pkg: '@modelcontextprotocol/server-brave-search', desc: 'Web search results via Brave.' },
-                  { name: 'PostgreSQL MCP', pkg: '@modelcontextprotocol/server-postgres', desc: 'Query your database directly.' },
-                  { name: 'Puppeteer MCP', pkg: '@modelcontextprotocol/server-puppeteer', desc: 'Browser automation and screenshots.' },
-                ].map(s => (
-                  <div key={s.name} className="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                    <div className="font-bold text-slate-900 text-sm mb-1">{s.name}</div>
-                    <div className="font-mono text-xs text-sky-600 mb-2">{s.pkg}</div>
-                    <div className="text-xs text-slate-500">{s.desc}</div>
+            <SubHeading>other popular MCP servers you can wrap</SubHeading>
+            <ul className="list-none p-0 m-0">
+              {[
+                ['github MCP', '@modelcontextprotocol/server-github', 'read repos, issues, PRs, and code.'],
+                ['filesystem MCP', '@modelcontextprotocol/server-filesystem', 'read and write local files.'],
+                ['slack MCP', '@modelcontextprotocol/server-slack', 'read channels, send messages.'],
+                ['brave search MCP', '@modelcontextprotocol/server-brave-search', 'web search results via brave.'],
+                ['postgresql MCP', '@modelcontextprotocol/server-postgres', 'query your database directly.'],
+                ['puppeteer MCP', '@modelcontextprotocol/server-puppeteer', 'browser automation and screenshots.'],
+              ].map(([name, pkg, desc]) => (
+                <li key={name} className="py-3 border-b border-dashed border-ink/10 last:border-b-0">
+                  <div className="flex items-baseline gap-3 flex-wrap">
+                    <span className="font-medium text-[0.92rem]">{name}</span>
+                    <code className="text-terracotta text-[0.78rem]">{pkg}</code>
                   </div>
-                ))}
+                  <p className="mt-1 mb-0 text-muted text-[0.85rem]">{desc}</p>
+                </li>
+              ))}
+            </ul>
+            <p className="text-muted text-[0.88rem] mt-4">
+              any MCP server that follows the standard protocol can be wrapped with mcp-spy — these are just the
+              most common ones.
+            </p>
+          </section>
+
+          <Divider />
+
+          {/* DEBUGGING */}
+          <section id="debugging" className="scroll-mt-24 mb-16">
+            <SectionHeading>debugging common errors</SectionHeading>
+            <p className="mb-6">
+              MCP failures can be confusing because the AI assistant usually gives a vague error message. here is
+              how to use mcp-spy to diagnose the most common problems.
+            </p>
+
+            <div className="border border-ink/15 mb-5">
+              <div className="border-b border-ink/15 px-4 py-2.5 bg-codebg">
+                <span className="font-medium text-[0.9rem] text-bordeaux">problem: claude says &ldquo;I wasn&apos;t able to use that tool&rdquo;</span>
               </div>
-              <p className="text-sm text-slate-500 mt-4">Any MCP server that follows the standard protocol can be wrapped with MCP-Spy — these are just the most common ones.</p>
-            </section>
-
-            {/* DEBUGGING */}
-            <section id="debugging" className="scroll-mt-32 mb-24 border-t border-slate-100 pt-16">
-              <div className="flex items-center gap-3 mb-6">
-                <AlertTriangle className="w-8 h-8 text-amber-500" />
-                <h2 className="text-3xl font-bold text-slate-900 m-0">Debugging common errors</h2>
+              <div className="p-4 text-[0.9rem] text-muted space-y-2">
+                <p className="m-0">open the mcp-spy TUI and look at the <strong className="text-ink font-medium">status code</strong> column for the failed call.</p>
+                <ul className="list-disc ml-5 space-y-1 m-0">
+                  <li><strong className="text-bordeaux font-medium">500</strong> — the server crashed. check the response payload for a stack trace.</li>
+                  <li><strong className="text-flame font-medium">404</strong> — claude called a tool that doesn&apos;t exist (wrong tool name or version mismatch).</li>
+                  <li><strong className="text-flame font-medium">401 / 403</strong> — missing or expired api key in the server&apos;s environment.</li>
+                  <li><strong className="text-ink font-medium">no entry at all</strong> — mcp-spy never received the request. your client config is still pointing to the old port.</li>
+                </ul>
               </div>
-              <p>
-                MCP failures can be confusing because the AI assistant usually gives a vague error message. Here is how to use MCP-Spy to diagnose the most common problems.
-              </p>
+            </div>
 
-              <div className="space-y-6 mt-8">
-                <div className="border border-slate-200 rounded-2xl overflow-hidden">
-                  <div className="bg-red-50 px-5 py-3 border-b border-red-100">
-                    <span className="font-bold text-red-700 text-sm">Problem: Claude says &ldquo;I wasn&apos;t able to use that tool&rdquo;</span>
-                  </div>
-                  <div className="p-5 text-sm text-slate-600 space-y-2">
-                    <p className="m-0">Open MCP-Spy TUI and look at the <strong>status code</strong> column for the failed call.</p>
-                    <ul className="list-disc ml-5 space-y-1 m-0">
-                      <li><strong className="text-red-600">500</strong> — The server crashed. Check the response payload for a stack trace.</li>
-                      <li><strong className="text-amber-600">404</strong> — Claude called a tool that doesn&apos;t exist (wrong tool name or version mismatch).</li>
-                      <li><strong className="text-amber-600">401 / 403</strong> — Missing or expired API key in the server&apos;s environment.</li>
-                      <li><strong className="text-slate-600">No entry at all</strong> — MCP-Spy never received the request. Your client config is still pointing to the old port.</li>
-                    </ul>
-                  </div>
-                </div>
-
-                <div className="border border-slate-200 rounded-2xl overflow-hidden">
-                  <div className="bg-amber-50 px-5 py-3 border-b border-amber-100">
-                    <span className="font-bold text-amber-700 text-sm">Problem: The tool returns wrong or incomplete results</span>
-                  </div>
-                  <div className="p-5 text-sm text-slate-600 space-y-2">
-                    <p className="m-0">Click on the log entry in the TUI to expand the full request and response payloads. Check:</p>
-                    <ul className="list-disc ml-5 space-y-1 m-0">
-                      <li>Did Claude send the right arguments? (Check <strong>Request Payload</strong>)</li>
-                      <li>What did the server actually return? (Check <strong>Response Payload</strong>)</li>
-                      <li>Is the data truncated, malformed, or missing fields the AI expected?</li>
-                    </ul>
-                    <p className="m-0 mt-2">With Cloud Pro you can use <strong>Edit & Replay</strong> to modify the request and resend it to isolate exactly what causes the problem.</p>
-                  </div>
-                </div>
-
-                <div className="border border-slate-200 rounded-2xl overflow-hidden">
-                  <div className="bg-slate-50 px-5 py-3 border-b border-slate-200">
-                    <span className="font-bold text-slate-700 text-sm">Problem: Everything is slow</span>
-                  </div>
-                  <div className="p-5 text-sm text-slate-600">
-                    <p className="m-0">The <strong>duration</strong> column in the TUI shows how long each call takes. If specific tool calls are slow (e.g. &gt;2 seconds), inspect the response to see if the server is returning large payloads that could be paginated or filtered.</p>
-                  </div>
-                </div>
+            <div className="border border-ink/15 mb-5">
+              <div className="border-b border-ink/15 px-4 py-2.5 bg-codebg">
+                <span className="font-medium text-[0.9rem] text-flame">problem: the tool returns wrong or incomplete results</span>
               </div>
-            </section>
-
-            {/* BUILDING MCPs */}
-            <section id="building-mcps" className="scroll-mt-32 mb-24 border-t border-slate-100 pt-16">
-              <div className="flex items-center gap-3 mb-6">
-                <Code className="w-8 h-8 text-pink-500" />
-                <h2 className="text-3xl font-bold text-slate-900 m-0">Building your own MCP server</h2>
+              <div className="p-4 text-[0.9rem] text-muted space-y-2">
+                <p className="m-0">select the log entry in the TUI to expand the full request and response payloads. check:</p>
+                <ul className="list-disc ml-5 space-y-1 m-0">
+                  <li>did claude send the right arguments? (check the request payload)</li>
+                  <li>what did the server actually return? (check the response payload)</li>
+                  <li>is the data truncated, malformed, or missing fields the AI expected?</li>
+                </ul>
+                <p className="m-0 mt-2">
+                  press <kbd className="bg-codebg border border-ink/20 px-1.5 py-0.5 text-[0.8rem]">c</kbd> to export the call
+                  as a cURL command, tweak the arguments in your terminal, and resend it to isolate exactly what causes the problem.
+                </p>
               </div>
-              <p>
-                If you are <em>developing</em> an MCP server, MCP-Spy is even more valuable. You get live feedback on every tool call during development without adding any logging code to your server.
-              </p>
-              <p>
-                The setup is the same — run your server, start MCP-Spy pointing at it, and connect your AI client to MCP-Spy&apos;s port. As you make changes to your server, MCP-Spy keeps logging. No restarts needed.
-              </p>
-              <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-5 my-6">
-                <h4 className="text-emerald-900 font-bold mt-0 mb-2 text-base">The development loop</h4>
-                <ol className="text-emerald-800 text-sm space-y-1 m-0 pl-4">
-                  <li>Start your MCP server (e.g. <code>node server.js</code> on port 3000)</li>
-                  <li>Start MCP-Spy (<code>npx mcp-spy --target 3000</code>)</li>
-                  <li>Ask Claude to call your tool</li>
-                  <li>See the exact JSON-RPC in the TUI</li>
-                  <li>Fix the bug, restart your server, repeat</li>
-                </ol>
-              </div>
-              <p>Language-specific examples are below in the <a href="#example-nodejs" className="text-sky-600 hover:underline">Server Examples</a> section.</p>
-            </section>
+            </div>
 
-            {/* INTEGRATIONS - CLAUDE */}
-            <section id="claude-desktop" className="scroll-mt-32 mb-24 border-t border-slate-100 pt-16">
-              <div className="flex items-center gap-3 mb-6">
-                <Settings className="w-8 h-8 text-orange-500" />
-                <h2 className="text-3xl font-bold text-slate-900 m-0">Claude Desktop</h2>
+            <div className="border border-ink/15">
+              <div className="border-b border-ink/15 px-4 py-2.5 bg-codebg">
+                <span className="font-medium text-[0.9rem]">problem: everything is slow</span>
               </div>
-              <p>
-                Claude Desktop reads its MCP server config from <code>claude_desktop_config.json</code>. The file lives at:
-              </p>
-              <ul className="text-sm space-y-1 font-mono bg-slate-50 border border-slate-200 rounded-xl p-4 not-prose">
-                <li className="text-slate-600"><span className="text-slate-400">macOS: </span>~/Library/Application Support/Claude/claude_desktop_config.json</li>
-                <li className="text-slate-600"><span className="text-slate-400">Windows: </span>%APPDATA%\Claude\claude_desktop_config.json</li>
-              </ul>
-              <p className="mt-4">To spy on any MCP server in Claude Desktop, change its <code>command</code> and <code>args</code> to go through MCP-Spy. Here is a complete example wrapping an HTTP-based custom server:</p>
+              <div className="p-4 text-[0.9rem] text-muted">
+                <p className="m-0">
+                  the <strong className="text-ink font-medium">duration</strong> column in the TUI shows how long each call
+                  takes. if specific tool calls are slow (e.g. &gt;2 seconds), inspect the response to see if the
+                  server is returning large payloads that could be paginated or filtered.
+                </p>
+              </div>
+            </div>
+          </section>
 
-              <div className="bg-slate-900 rounded-2xl p-6 shadow-xl overflow-x-auto border border-slate-800 mt-8 relative">
-                <div className="absolute top-0 left-0 w-full h-8 bg-slate-800/50 border-b border-slate-700/50 flex items-center px-4 gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-400/80"></div>
-                  <div className="w-3 h-3 rounded-full bg-amber-400/80"></div>
-                  <div className="w-3 h-3 rounded-full bg-emerald-400/80"></div>
-                  <span className="ml-2 text-xs font-mono text-slate-400">claude_desktop_config.json</span>
-                </div>
-<pre className="text-slate-300 font-mono text-sm mt-6 mb-0 bg-transparent"><code>{`{
+          <Divider />
+
+          {/* BUILDING MCPs */}
+          <section id="building-mcps" className="scroll-mt-24 mb-16">
+            <SectionHeading>building your own MCP server</SectionHeading>
+            <p className="mb-4">
+              if you are <em>developing</em> an MCP server, mcp-spy is even more valuable. you get live feedback on
+              every tool call during development without adding any logging code to your server.
+            </p>
+            <p className="mb-4">
+              the setup is the same — run your server, start mcp-spy pointing at it, and connect your AI client to
+              mcp-spy&apos;s port. as you make changes to your server, mcp-spy keeps logging. no restarts needed.
+            </p>
+            <Callout title="the development loop">
+              start your MCP server (e.g. <code className="text-[0.88em]">node server.js</code> on port 3000) →
+              start mcp-spy (<code className="text-[0.88em]">npx mcp-spy --target 3000</code>) →
+              ask claude to call your tool → see the exact JSON-RPC in the TUI → fix the bug, restart your server, repeat.
+            </Callout>
+            <p>language-specific examples are below in the <a href="#example-nodejs" className="underline underline-offset-4 decoration-muted hover:decoration-ink">server examples</a> section.</p>
+          </section>
+
+          <Divider />
+
+          {/* CLAUDE DESKTOP */}
+          <section id="claude-desktop" className="scroll-mt-24 mb-16">
+            <SectionHeading>claude desktop</SectionHeading>
+            <p>claude desktop reads its MCP server config from <code className="bg-codebg px-1.5 py-0.5 text-[0.88em]">claude_desktop_config.json</code>. the file lives at:</p>
+            <CodeBlock>{`macOS:   ~/Library/Application Support/Claude/claude_desktop_config.json
+Windows: %APPDATA%\\Claude\\claude_desktop_config.json`}</CodeBlock>
+            <p>
+              to spy on any MCP server in claude desktop, change its <code className="bg-codebg px-1.5 py-0.5 text-[0.88em]">command</code> and{' '}
+              <code className="bg-codebg px-1.5 py-0.5 text-[0.88em]">args</code> to go through mcp-spy. here is a complete
+              example wrapping an HTTP-based custom server:
+            </p>
+            <CodeBlock label="claude_desktop_config.json">{`{
   "mcpServers": {
     "my-server": {
       "command": "npx",
@@ -411,292 +396,174 @@ export default function DocsPage() {
       "env": {}
     }
   }
-}`}</code></pre>
-              </div>
-              <p className="text-sm text-slate-500 mt-3">Claude Desktop launches this command when it starts. MCP-Spy listens on port 4000, forwards to your server on 3000, and logs everything. <strong>Restart Claude Desktop</strong> after editing the config file.</p>
-            </section>
+}`}</CodeBlock>
+            <p className="text-muted text-[0.88rem]">
+              claude desktop launches this command when it starts. mcp-spy listens on port 4000, forwards to your
+              server on 3000, and logs everything. <strong className="text-ink font-medium">restart claude desktop</strong> after
+              editing the config file.
+            </p>
+          </section>
 
-            {/* INTEGRATIONS - CURSOR */}
-            <section id="cursor" className="scroll-mt-32 mb-24 border-t border-slate-100 pt-16">
-              <div className="flex items-center gap-3 mb-6">
-                <Settings className="w-8 h-8 text-blue-500" />
-                <h2 className="text-3xl font-bold text-slate-900 m-0">Cursor</h2>
-              </div>
-              <p>
-                Go to <strong>Cursor Settings → Features → MCP</strong> and add a new server entry. Set the command to launch MCP-Spy instead of your server directly.
-              </p>
-              <div className="bg-slate-900 rounded-2xl p-6 shadow-xl overflow-x-auto border border-slate-800 mt-8 relative">
-                <div className="absolute top-0 left-0 w-full h-8 bg-slate-800/50 border-b border-slate-700/50 flex items-center px-4 gap-2">
-                  <span className="ml-2 text-xs font-mono text-slate-400">Cursor MCP config (JSON)</span>
-                </div>
-<pre className="text-slate-300 font-mono text-sm mt-6 mb-0 bg-transparent"><code>{`{
+          {/* CURSOR */}
+          <section id="cursor" className="scroll-mt-24 mb-16">
+            <SectionHeading>cursor</SectionHeading>
+            <p>
+              go to <strong className="font-medium">cursor settings → features → MCP</strong> and add a new server
+              entry. set the command to launch mcp-spy instead of your server directly.
+            </p>
+            <CodeBlock label="cursor MCP config (JSON)">{`{
   "mcpServers": {
     "my-server": {
       "command": "npx",
       "args": ["mcp-spy", "--target", "3000"]
     }
   }
-}`}</code></pre>
-              </div>
-              <p className="text-sm text-slate-500 mt-3">Cursor will launch MCP-Spy on startup and route all tool calls through it.</p>
-            </section>
+}`}</CodeBlock>
+            <p className="text-muted text-[0.88rem]">cursor will launch mcp-spy on startup and route all tool calls through it.</p>
+          </section>
 
-            {/* WINDSURF */}
-            <section id="windsurf" className="scroll-mt-32 mb-24 border-t border-slate-100 pt-16">
-              <div className="flex items-center gap-3 mb-6">
-                <Settings className="w-8 h-8 text-teal-500" />
-                <h2 className="text-3xl font-bold text-slate-900 m-0">Windsurf</h2>
-              </div>
-              <p>
-                Windsurf (by Codeium) also supports MCP servers. Edit the <code>~/.codeium/windsurf/mcp_config.json</code> file and add MCP-Spy as a wrapper the same way as Claude Desktop.
-              </p>
-              <div className="bg-slate-900 rounded-2xl p-6 shadow-xl overflow-x-auto border border-slate-800 mt-8 relative">
-                <div className="absolute top-0 left-0 w-full h-8 bg-slate-800/50 border-b border-slate-700/50 flex items-center px-4 gap-2">
-                  <span className="ml-2 text-xs font-mono text-slate-400">~/.codeium/windsurf/mcp_config.json</span>
-                </div>
-<pre className="text-slate-300 font-mono text-sm mt-6 mb-0 bg-transparent"><code>{`{
+          {/* WINDSURF */}
+          <section id="windsurf" className="scroll-mt-24 mb-16">
+            <SectionHeading>windsurf</SectionHeading>
+            <p>
+              windsurf (by codeium) also supports MCP servers. edit the{' '}
+              <code className="bg-codebg px-1.5 py-0.5 text-[0.88em]">~/.codeium/windsurf/mcp_config.json</code> file and add
+              mcp-spy as a wrapper the same way as claude desktop.
+            </p>
+            <CodeBlock label="~/.codeium/windsurf/mcp_config.json">{`{
   "mcpServers": {
     "my-server": {
       "command": "npx",
       "args": ["mcp-spy", "--target", "3000"]
     }
   }
-}`}</code></pre>
-              </div>
-            </section>
+}`}</CodeBlock>
+          </section>
 
-            {/* OTHER CLIENTS */}
-            <section id="other-clients" className="scroll-mt-32 mb-24 border-t border-slate-100 pt-16">
-              <div className="flex items-center gap-3 mb-6">
-                <Settings className="w-8 h-8 text-slate-500" />
-                <h2 className="text-3xl font-bold text-slate-900 m-0">Other MCP clients</h2>
-              </div>
-              <p>
-                Any MCP-compatible client works with MCP-Spy as long as you can configure it to use a custom server address. The pattern is always the same:
-              </p>
-              <ol className="space-y-2 ml-4">
-                <li>Find where the client defines its MCP server (usually a JSON config file)</li>
-                <li>Replace the direct server command or URL with MCP-Spy&apos;s address (<code>http://localhost:4000</code>)</li>
-                <li>Make sure MCP-Spy is running with <code>--target</code> pointing at the original server</li>
-              </ol>
-              <p className="text-slate-500 text-sm mt-4">
-                Compatible clients include: Claude Desktop, Cursor, Windsurf, VS Code (Continue extension), Zed, and any custom application using the official MCP SDK.
-              </p>
-            </section>
+          {/* OTHER CLIENTS */}
+          <section id="other-clients" className="scroll-mt-24 mb-16">
+            <SectionHeading>other MCP clients</SectionHeading>
+            <p>
+              any MCP-compatible client works with mcp-spy as long as you can configure it to use a custom server
+              address. the pattern is always the same:
+            </p>
+            <ol className="list-decimal ml-5 space-y-2 my-4">
+              <li>find where the client defines its MCP server (usually a JSON config file)</li>
+              <li>replace the direct server command or URL with mcp-spy&apos;s address (<code className="bg-codebg px-1.5 py-0.5 text-[0.88em]">http://localhost:4000</code>)</li>
+              <li>make sure mcp-spy is running with <code className="bg-codebg px-1.5 py-0.5 text-[0.88em]">--target</code> pointing at the original server</li>
+            </ol>
+            <p className="text-muted text-[0.88rem]">
+              compatible clients include: claude desktop, cursor, windsurf, VS code (continue extension), zed, and
+              any custom application using the official MCP SDK.
+            </p>
+          </section>
 
-            {/* CLOUD SYNC */}
-            <section id="cloud-sync" className="scroll-mt-32 mb-24 relative">
-              <div className="bg-gradient-to-br from-slate-900 to-slate-800 text-slate-300 p-10 rounded-[2rem] shadow-2xl relative overflow-hidden border border-slate-700">
-                <div className="absolute top-0 right-0 bg-sky-500 text-white text-xs font-bold px-6 py-2 rounded-bl-3xl uppercase tracking-widest shadow-lg">
-                  Pro Feature
-                </div>
-                <div className="flex items-center gap-4 mb-6 border-b border-slate-700/50 pb-6 relative z-10">
-                  <Shield className="w-10 h-10 text-sky-400 drop-shadow-md" />
-                  <h2 className="text-3xl font-extrabold text-white m-0 tracking-tight">Cloud Sync Dashboard</h2>
-                </div>
-                <p className="text-slate-300 text-lg leading-relaxed relative z-10 font-light">
-                  By default, MCP-Spy stores logs locally in a SQLite database on your machine. With Cloud Sync (Pro), every intercepted call is also uploaded to your personal dashboard at mcpspy.dev in real time.
-                </p>
-                <div className="grid sm:grid-cols-2 gap-4 mt-8 mb-10 relative z-10">
-                  <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700 backdrop-blur-sm">
-                    <h4 className="text-white font-bold mb-2 flex items-center gap-2 text-sm"><Zap className="w-4 h-4 text-amber-400" /> Persistent history</h4>
-                    <p className="text-sm text-slate-400 m-0">All your logs are saved in the cloud. Close your terminal and come back later — everything is still there.</p>
-                  </div>
-                  <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700 backdrop-blur-sm">
-                    <h4 className="text-white font-bold mb-2 flex items-center gap-2 text-sm"><Share2 className="w-4 h-4 text-emerald-400" /> Share with your team</h4>
-                    <p className="text-sm text-slate-400 m-0">Generate a public link for any trace. Share it with a teammate or paste it in a GitHub issue.</p>
-                  </div>
-                  <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700 backdrop-blur-sm">
-                    <h4 className="text-white font-bold mb-2 flex items-center gap-2 text-sm"><RefreshCw className="w-4 h-4 text-sky-400" /> Edit & Replay</h4>
-                    <p className="text-sm text-slate-400 m-0">Modify any request payload in the browser and resend it to your local MCP server instantly.</p>
-                  </div>
-                  <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700 backdrop-blur-sm">
-                    <h4 className="text-white font-bold mb-2 flex items-center gap-2 text-sm"><Eye className="w-4 h-4 text-violet-400" /> Visual inspector</h4>
-                    <p className="text-sm text-slate-400 m-0">Syntax-highlighted JSON diff view, filter by status, method, or duration — all in the browser.</p>
-                  </div>
-                </div>
+          <Divider />
 
-                <div className="relative z-10">
-                  <p className="text-sm text-slate-400 mb-2 font-medium uppercase tracking-wider">Activate in CLI:</p>
-                  <code className="text-sky-300 bg-black/50 px-4 py-3 rounded-xl block font-mono text-sm border border-slate-700 shadow-inner">
-                    npx mcp-spy --target 3000 --sync mcp_live_XXXXXXXX
-                  </code>
-                  <p className="text-xs text-slate-500 mt-3">Get your API key from the dashboard after subscribing at <Link href="/pricing" className="text-sky-400 hover:underline">mcpspy.dev/pricing</Link>.</p>
-                </div>
+          {/* AUTO-REDACTION */}
+          <section id="redaction" className="scroll-mt-24 mb-16">
+            <SectionHeading>auto-redaction</SectionHeading>
+            <p>
+              add <code className="bg-codebg px-1.5 py-0.5 text-[0.88em]">--redact-pii</code> to automatically mask secrets
+              from all payloads before they are saved. nothing sensitive ever touches the database.
+            </p>
+            <CodeBlock>{`npx mcp-spy --target 3000 --redact-pii`}</CodeBlock>
+            <p>the following patterns are automatically redacted:</p>
+            <ul className="list-none p-0 m-0 mb-4">
+              {[
+                ['aws access keys', 'AKIA… patterns'],
+                ['bearer tokens', 'authorization headers in payloads'],
+                ['private keys', '-----BEGIN … blocks'],
+                ['JSON secrets', '"password", "token", "api_key" fields'],
+                ['email addresses', 'user@example.com'],
+                ['high-entropy tokens', '32–64 char hex strings'],
+              ].map(([name, desc]) => (
+                <li key={name} className="py-2 border-b border-dashed border-ink/10 last:border-b-0 flex items-baseline gap-3 flex-wrap">
+                  <span className="font-medium text-[0.9rem]">{name}</span>
+                  <span className="text-muted text-[0.85rem]">{desc}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="text-muted text-[0.88rem]">
+              redacted logs are tagged with a 🔒 badge in the TUI. the original bytes are forwarded to the MCP
+              server unmodified — redaction only affects storage.
+            </p>
+          </section>
 
-                <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-sky-500/10 rounded-full blur-3xl mix-blend-screen pointer-events-none"></div>
-              </div>
-            </section>
+          {/* TOKEN PROFILING */}
+          <section id="tokens" className="scroll-mt-24 mb-16">
+            <SectionHeading>token profiling</SectionHeading>
+            <p className="mb-4">
+              every intercepted request and response is automatically profiled for token count. this tells you how
+              much of an LLM&apos;s context window each tool call consumes.
+            </p>
+            <p className="mb-4">
+              token counts appear as <code className="bg-codebg px-1.5 py-0.5 text-[0.88em]">~1.2k</code> badges on every log
+              row in the TUI. the stats bar shows the session total. no extra flags needed — it&apos;s always on.
+            </p>
+            <Callout title="estimation method">
+              uses a blended heuristic (word count × 1.3 vs. char count ÷ 4, take the higher). accurate to ±15% for
+              JSON/code payloads — adequate for spotting expensive calls without any heavy dependencies.
+            </Callout>
+          </section>
 
-            {/* EDIT & REPLAY */}
-            <section id="edit-replay" className="scroll-mt-32 mb-24 border-t border-slate-100 pt-16">
-              <div className="flex items-center gap-3 mb-6">
-                <RefreshCw className="w-8 h-8 text-emerald-500" />
-                <h2 className="text-3xl font-bold text-slate-900 m-0">Edit & Replay <span className="ml-2 text-sm font-normal bg-sky-100 text-sky-700 px-2 py-0.5 rounded uppercase tracking-wider">Pro</span></h2>
-              </div>
-              <p>
-                Edit & Replay lets you take any logged request, modify its JSON payload in the browser, and resend it to your locally running MCP server — without triggering Claude again.
-              </p>
-              <p>This is useful for:</p>
-              <ul className="space-y-1">
-                <li>Testing how your server handles edge cases (empty strings, large numbers, missing fields)</li>
-                <li>Reproducing a specific failure with slightly different inputs</li>
-                <li>Confirming that a bug is in the request (Claude&apos;s side) vs. the response (server side)</li>
-              </ul>
-
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 mt-6">
-                <h4 className="font-bold text-slate-900 text-sm mb-3">How to use it</h4>
-                <ol className="text-sm text-slate-600 space-y-2 m-0 pl-4">
-                  <li>Open the <Link href="/dashboard" className="text-sky-600 hover:underline">dashboard</Link> (Pro required)</li>
-                  <li>Click any log entry to select it</li>
-                  <li>Click <strong>Edit & Replay</strong> — a modal opens with the original JSON request</li>
-                  <li>Modify the payload as needed</li>
-                  <li>Click <strong>Send</strong> — the response appears immediately below</li>
-                </ol>
-                <p className="text-xs text-slate-400 mt-3 m-0">Requires the CLI to be running locally (<code>npx mcp-spy --target ...</code>) since Edit & Replay sends the request through your machine&apos;s local proxy.</p>
-              </div>
-            </section>
-
-            {/* SHARE TRACE */}
-            <section id="share-trace" className="scroll-mt-32 mb-24 border-t border-slate-100 pt-16">
-              <div className="flex items-center gap-3 mb-6">
-                <Share2 className="w-8 h-8 text-violet-500" />
-                <h2 className="text-3xl font-bold text-slate-900 m-0">Share Trace <span className="ml-2 text-sm font-normal bg-sky-100 text-sky-700 px-2 py-0.5 rounded uppercase tracking-wider">Pro</span></h2>
-              </div>
-              <p>
-                Any log entry in your dashboard can be turned into a permanent, public link that anyone can view — no login required.
-              </p>
-              <p>
-                The shared trace page shows the full request and response payloads with syntax highlighting, the HTTP method, status code, and duration. It is read-only and works from any device.
-              </p>
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 mt-4">
-                <h4 className="font-bold text-slate-900 text-sm mb-3">How to share a trace</h4>
-                <ol className="text-sm text-slate-600 space-y-2 m-0 pl-4">
-                  <li>Open the <Link href="/dashboard" className="text-sky-600 hover:underline">dashboard</Link> and click any log entry</li>
-                  <li>Click the <strong>Share</strong> button (chain icon)</li>
-                  <li>The link is copied to your clipboard automatically</li>
-                  <li>The URL looks like: <code className="text-xs">mcpspy.dev/trace/abc123...</code></li>
-                </ol>
-              </div>
-            </section>
-
-            {/* AUTO-REDACTION */}
-            <section id="redaction" className="scroll-mt-32 mb-24 border-t border-slate-100 pt-16">
-              <div className="flex items-center gap-3 mb-6">
-                <Lock className="w-8 h-8 text-amber-500" />
-                <h2 className="text-3xl font-bold text-slate-900 m-0">Auto-Redaction</h2>
-                <span className="text-xs font-bold bg-sky-100 text-sky-700 px-2.5 py-1 rounded-full uppercase tracking-wider">Pro</span>
-              </div>
-              <p>Add <code>--redact-pii</code> to automatically mask secrets from all payloads before they are saved locally or synced to the cloud. Nothing sensitive ever touches the database.</p>
-              <div className="bg-slate-900 rounded-xl p-4 my-6 overflow-x-auto border border-slate-800">
-                <pre className="text-emerald-400 font-mono text-sm m-0">{`npx mcp-spy --target 3000 --redact-pii --sync YOUR_KEY`}</pre>
-              </div>
-              <p>The following patterns are automatically redacted:</p>
-              <div className="grid sm:grid-cols-2 gap-3 not-prose mt-4">
-                {[
-                  ['AWS Access Keys', 'AKIA… patterns'],
-                  ['Bearer tokens', 'Authorization headers in payloads'],
-                  ['Private keys', '-----BEGIN … blocks'],
-                  ['JSON secrets', '"password", "token", "api_key" fields'],
-                  ['Email addresses', 'user@example.com'],
-                  ['High-entropy tokens', '32–64 char hex strings'],
-                ].map(([name, desc]) => (
-                  <div key={name} className="bg-amber-50 border border-amber-100 rounded-xl p-3">
-                    <div className="font-bold text-amber-900 text-sm mb-0.5">{name}</div>
-                    <div className="text-xs text-amber-700">{desc}</div>
-                  </div>
-                ))}
-              </div>
-              <p className="text-sm text-slate-500 mt-4">Redacted logs are tagged with a 🔒 badge in both the TUI and dashboard. The original bytes are forwarded to the MCP server unmodified — redaction only affects storage.</p>
-            </section>
-
-            {/* TOKEN PROFILING */}
-            <section id="tokens" className="scroll-mt-32 mb-24 border-t border-slate-100 pt-16">
-              <div className="flex items-center gap-3 mb-6">
-                <Coins className="w-8 h-8 text-emerald-500" />
-                <h2 className="text-3xl font-bold text-slate-900 m-0">Token Profiling</h2>
-                <span className="text-xs font-bold bg-sky-100 text-sky-700 px-2.5 py-1 rounded-full uppercase tracking-wider">Pro</span>
-              </div>
-              <p>Every intercepted request and response is automatically profiled for token count. This tells you how much of an LLM&apos;s context window each tool call consumes — and gives you a rough cost estimate.</p>
-              <p>Token counts appear as <code>~1.2k</code> badges on every log row in the TUI and dashboard. The TUI stats bar shows the session total. No extra flags needed — it&apos;s always on.</p>
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 mt-6">
-                <h4 className="font-bold text-slate-900 text-sm mb-3">Estimation method</h4>
-                <p className="text-sm text-slate-600 m-0">Uses a blended heuristic (word count × 1.3 vs. char count ÷ 4, take the higher). Accurate to ±15% for JSON/code payloads — adequate for spotting expensive calls without any heavy dependencies.</p>
-              </div>
-            </section>
-
-            {/* EXPORT */}
-            <section id="export" className="scroll-mt-32 mb-24 border-t border-slate-100 pt-16">
-              <div className="flex items-center gap-3 mb-6">
-                <Download className="w-8 h-8 text-sky-500" />
-                <h2 className="text-3xl font-bold text-slate-900 m-0">Export (cURL / Postman)</h2>
-                <span className="text-xs font-bold bg-sky-100 text-sky-700 px-2.5 py-1 rounded-full uppercase tracking-wider">Pro</span>
-              </div>
-              <p>Turn any saved log into a runnable shell command or a Postman collection with one click.</p>
-              <div className="grid sm:grid-cols-2 gap-5 mt-6 not-prose">
-                <div className="bg-slate-50 border border-slate-200 rounded-xl p-5">
-                  <h4 className="font-bold text-slate-900 text-sm mb-2">Copy as cURL</h4>
-                  <p className="text-xs text-slate-500 mb-3">In the dashboard: select a log → <strong>Copy cURL</strong> button.<br />In the TUI: select a log → press <code>c</code>.</p>
-                  <div className="bg-slate-900 rounded-lg p-3 overflow-x-auto">
-                    <pre className="text-emerald-400 font-mono text-xs m-0">{`curl -s -X POST http://localhost:4000 \\
+          {/* EXPORT */}
+          <section id="export" className="scroll-mt-24 mb-16">
+            <SectionHeading>cURL export</SectionHeading>
+            <p>
+              turn any captured log into a runnable shell command with one keypress: select a log in the TUI and
+              press <kbd className="bg-codebg border border-ink/20 px-1.5 py-0.5 text-[0.8rem]">c</kbd>.
+            </p>
+            <CodeBlock>{`curl -s -X POST http://localhost:4000 \\
   -H 'Content-Type: application/json' \\
-  -d '{"jsonrpc":"2.0","method":"tools/call",...}'`}</pre>
-                  </div>
-                </div>
-                <div className="bg-slate-50 border border-slate-200 rounded-xl p-5">
-                  <h4 className="font-bold text-slate-900 text-sm mb-2">Postman Collection</h4>
-                  <p className="text-xs text-slate-500 mb-3">In the dashboard: click the <strong>Postman</strong> button in the top-right. Downloads a <code>.json</code> file you can import directly into Postman.</p>
-                  <p className="text-xs text-slate-400 italic">The collection includes all currently visible logs as individual requests, respecting any active server filter.</p>
-                </div>
-              </div>
-            </section>
+  -d '{"jsonrpc":"2.0","method":"tools/call",...}'`}</CodeBlock>
+            <p className="text-muted text-[0.88rem]">
+              paste it in a terminal, tweak the arguments, and re-fire the exact call without re-triggering claude —
+              perfect for reproducing bugs and testing edge cases.
+            </p>
+          </section>
 
-            {/* AUTO-MOCK */}
-            <section id="mock" className="scroll-mt-32 mb-24 border-t border-slate-100 pt-16">
-              <div className="flex items-center gap-3 mb-6">
-                <FlaskConical className="w-8 h-8 text-violet-500" />
-                <h2 className="text-3xl font-bold text-slate-900 m-0">Auto-Mock Mode</h2>
-                <span className="text-xs font-bold bg-sky-100 text-sky-700 px-2.5 py-1 rounded-full uppercase tracking-wider">Pro</span>
-              </div>
-              <p>Add <code>--mock</code> to make MCP-Spy intercept all requests and return saved responses from your local database — <strong>without forwarding anything to the real server.</strong></p>
-              <div className="bg-slate-900 rounded-xl p-4 my-6 overflow-x-auto border border-slate-800">
-                <pre className="text-emerald-400 font-mono text-sm m-0">{`npx mcp-spy --target 3000 --mock`}</pre>
-              </div>
-              <p>For each incoming <code>method</code> (e.g. <code>tools/call</code>), MCP-Spy looks up the most recent successful response for that method in SQLite and returns it immediately. If no saved response exists for a method, it returns a 404 JSON-RPC error.</p>
-              <div className="bg-violet-50 border border-violet-100 rounded-xl p-5 mt-4">
-                <h4 className="text-violet-900 font-bold text-sm mb-2">When is this useful?</h4>
-                <ul className="text-sm text-violet-800 space-y-1 m-0 pl-4 list-disc">
-                  <li>Testing AI agent behaviour without hitting real APIs or incurring costs</li>
-                  <li>Reproducing a specific scenario deterministically</li>
-                  <li>Running the agent while the real MCP server is offline</li>
-                  <li>Frontend development where you don&apos;t need live data</li>
-                </ul>
-              </div>
-            </section>
+          {/* MOCK */}
+          <section id="mock" className="scroll-mt-24 mb-16">
+            <SectionHeading>mock mode</SectionHeading>
+            <p>
+              add <code className="bg-codebg px-1.5 py-0.5 text-[0.88em]">--mock</code> to make mcp-spy intercept all requests
+              and return saved responses from your local database —{' '}
+              <strong className="font-medium">without forwarding anything to the real server.</strong>
+            </p>
+            <CodeBlock>{`npx mcp-spy --target 3000 --mock`}</CodeBlock>
+            <p className="mb-4">
+              for each incoming <code className="bg-codebg px-1.5 py-0.5 text-[0.88em]">method</code> (e.g.{' '}
+              <code className="bg-codebg px-1.5 py-0.5 text-[0.88em]">tools/call</code>), mcp-spy looks up the most recent
+              successful response for that method in sqlite and returns it immediately. if no saved response exists
+              for a method, it returns a 404 JSON-RPC error.
+            </p>
+            <Callout title="when is this useful?">
+              testing AI agent behaviour without hitting real APIs or incurring costs · reproducing a specific
+              scenario deterministically · running the agent while the real MCP server is offline · frontend
+              development where you don&apos;t need live data.
+            </Callout>
+          </section>
 
-            {/* CI/CD TEST RUNNER */}
-            <section id="ci-runner" className="scroll-mt-32 mb-24 border-t border-slate-100 pt-16">
-              <div className="flex items-center gap-3 mb-6">
-                <Play className="w-8 h-8 text-emerald-500" />
-                <h2 className="text-3xl font-bold text-slate-900 m-0">CI/CD Test Runner</h2>
-                <span className="text-xs font-bold bg-sky-100 text-sky-700 px-2.5 py-1 rounded-full uppercase tracking-wider">Pro</span>
-              </div>
-              <p>Use the <code>test</code> subcommand to replay saved requests against your MCP server and assert valid JSON-RPC responses. Exits <code>0</code> on all pass, <code>1</code> on any failure — works natively in GitHub Actions, GitLab CI, and any shell pipeline.</p>
-              <div className="bg-slate-900 rounded-xl p-4 my-6 overflow-x-auto border border-slate-800">
-                <pre className="text-emerald-400 font-mono text-sm m-0">{`# Replay last 10 saved requests against the server on port 3000
+          {/* CI RUNNER */}
+          <section id="ci-runner" className="scroll-mt-24 mb-16">
+            <SectionHeading>CI/CD test runner</SectionHeading>
+            <p>
+              use the <code className="bg-codebg px-1.5 py-0.5 text-[0.88em]">test</code> subcommand to replay saved requests
+              against your MCP server and assert valid JSON-RPC responses. exits{' '}
+              <code className="bg-codebg px-1.5 py-0.5 text-[0.88em]">0</code> on all pass,{' '}
+              <code className="bg-codebg px-1.5 py-0.5 text-[0.88em]">1</code> on any failure — works natively in github
+              actions, gitlab CI, and any shell pipeline.
+            </p>
+            <CodeBlock>{`# replay last 10 saved requests against the server on port 3000
 npx mcp-spy test --target 3000
 
-# Only replay a specific method
+# only replay a specific method
 npx mcp-spy test --target 3000 --method tools/call
 
-# Only replay from a specific server label
-npx mcp-spy test --target 3000 --name filesystem --count 20`}</pre>
-              </div>
-              <div className="bg-slate-900 rounded-2xl p-6 shadow-xl overflow-x-auto border border-slate-800 mt-8 relative">
-                <div className="absolute top-0 left-0 w-full h-8 bg-slate-800/50 border-b border-slate-700/50 flex items-center px-4 gap-2">
-                  <span className="text-xs font-mono text-slate-400">.github/workflows/mcp-test.yml</span>
-                </div>
-<pre className="text-cyan-300 font-mono text-sm mt-6 mb-0 bg-transparent">{`name: MCP Server Tests
+# only replay from a specific server label
+npx mcp-spy test --target 3000 --name filesystem --count 20`}</CodeBlock>
+            <CodeBlock label=".github/workflows/mcp-test.yml">{`name: MCP Server Tests
 on: [push, pull_request]
 
 jobs:
@@ -706,141 +573,47 @@ jobs:
       - uses: actions/checkout@v4
       - name: Start MCP server
         run: node server.js &
-      - name: Run MCP-Spy tests
-        run: npx mcp-spy test --target 3000 --count 20`}</pre>
-              </div>
-              <div className="border border-slate-200 rounded-2xl overflow-hidden mt-8 not-prose shadow-sm">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-slate-50 border-b border-slate-200">
-                      <th className="py-3 px-5 font-bold text-xs uppercase tracking-wider text-slate-600">Flag</th>
-                      <th className="py-3 px-5 font-bold text-xs uppercase tracking-wider text-slate-600">Description</th>
-                      <th className="py-3 px-5 font-bold text-xs uppercase tracking-wider text-slate-600 text-right">Default</th>
+      - name: Run mcp-spy tests
+        run: npx mcp-spy test --target 3000 --count 20`}</CodeBlock>
+            <div className="border border-ink/15 overflow-x-auto">
+              <table className="w-full text-left border-collapse text-[0.88rem]">
+                <thead>
+                  <tr className="border-b border-ink/15 bg-codebg text-[0.75rem] uppercase tracking-[0.12em] text-muted">
+                    <th className="py-2.5 px-4 font-medium">flag</th>
+                    <th className="py-2.5 px-4 font-medium">description</th>
+                    <th className="py-2.5 px-4 font-medium text-right">default</th>
+                  </tr>
+                </thead>
+                <tbody className="text-muted">
+                  {[
+                    ['--target', 'port of the MCP server to test', 'required'],
+                    ['--method', 'filter to only replay this JSON-RPC method', 'all'],
+                    ['--name', 'filter to only replay from this server label', 'all'],
+                    ['--count', 'max requests to replay', '10'],
+                    ['--timeout', 'per-request timeout in ms', '5000'],
+                  ].map(([flag, desc, def]) => (
+                    <tr key={flag} className="border-b border-dashed border-ink/10 last:border-b-0">
+                      <td className="py-2.5 px-4 font-medium text-ink whitespace-nowrap">{flag}</td>
+                      <td className="py-2.5 px-4">{desc}</td>
+                      <td className="py-2.5 px-4 text-right text-faint">{def}</td>
                     </tr>
-                  </thead>
-                  <tbody className="text-sm text-slate-600 divide-y divide-slate-100">
-                    <tr><td className="py-3 px-5 font-mono font-bold text-slate-900">--target</td><td className="py-3 px-5">Port of the MCP server to test</td><td className="py-3 px-5 font-mono text-right text-slate-400">required</td></tr>
-                    <tr><td className="py-3 px-5 font-mono font-bold text-slate-900">--method</td><td className="py-3 px-5">Filter to only replay this JSON-RPC method</td><td className="py-3 px-5 font-mono text-right text-slate-400">all</td></tr>
-                    <tr><td className="py-3 px-5 font-mono font-bold text-slate-900">--name</td><td className="py-3 px-5">Filter to only replay from this server label</td><td className="py-3 px-5 font-mono text-right text-slate-400">all</td></tr>
-                    <tr><td className="py-3 px-5 font-mono font-bold text-slate-900">--count</td><td className="py-3 px-5">Max requests to replay</td><td className="py-3 px-5 font-mono text-right text-slate-400">10</td></tr>
-                    <tr><td className="py-3 px-5 font-mono font-bold text-slate-900">--timeout</td><td className="py-3 px-5">Per-request timeout in ms</td><td className="py-3 px-5 font-mono text-right text-slate-400">5000</td></tr>
-                  </tbody>
-                </table>
-              </div>
-            </section>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
 
-            {/* TUI KEYBOARD SHORTCUTS */}
-            <section id="tui-shortcuts" className="scroll-mt-32 mb-24 border-t border-slate-100 pt-16">
-              <div className="flex items-center gap-3 mb-6">
-                <Keyboard className="w-8 h-8 text-slate-600" />
-                <h2 className="text-3xl font-bold text-slate-900 m-0">TUI — Invoking &amp; Keyboard Shortcuts</h2>
-              </div>
+          <Divider />
 
-              <h3 className="text-xl font-bold text-slate-800 mb-3 mt-8">How to launch the TUI</h3>
-              <p>
-                The Terminal UI (TUI) is a full-screen interface that shows a live list of intercepted MCP calls on the left and the selected payload on the right. It opens automatically whenever you start the proxy with a <code>--target</code> port.
-              </p>
-
-              <div className="bg-slate-900 rounded-2xl p-6 shadow-xl overflow-x-auto border border-slate-800 mt-6 relative">
-                <div className="absolute top-0 left-0 w-full h-8 bg-slate-800/50 border-b border-slate-700/50 flex items-center px-4 gap-2">
-                  <span className="text-xs font-mono text-slate-400">Terminal — start the TUI alongside the proxy</span>
-                </div>
-                <pre className="text-cyan-300 font-mono text-sm mt-6 mb-0 bg-transparent"><code>{`# Basic — proxy + TUI in one command
-npx mcp-spy -t 3001
-
-# With a label and cloud sync (Pro)
-npx mcp-spy -t 3001 --name filesystem --sync mcp_live_XXXX...
-
-# Disable TUI, keep plain console output (useful in CI)
-npx mcp-spy -t 3001 --no-tui`}</code></pre>
-              </div>
-
-              <h3 className="text-xl font-bold text-slate-800 mb-3 mt-10">Standalone welcome &amp; guided setup</h3>
-              <p>
-                Running <code>npx mcp-spy</code> <strong>without <code>--target</code></strong> opens an interactive welcome screen instead of the proxy. You will see:
-              </p>
-              <ol className="list-decimal pl-6 space-y-2 text-slate-600 mt-4">
-                <li><strong>Subscription prompt</strong> — a summary of what Pro unlocks and the price. Press <kbd className="bg-slate-100 border border-slate-300 rounded px-1.5 py-0.5 text-xs font-mono">Y</kbd> to open <code>mcpspy.dev/pricing</code> in your browser, or <kbd className="bg-slate-100 border border-slate-300 rounded px-1.5 py-0.5 text-xs font-mono">N</kbd> to skip.</li>
-                <li><strong>Guided setup wizard</strong> — a 4-step walkthrough that shows you how to connect the official <code>@modelcontextprotocol/server-filesystem</code> server to MCP-SPY and your MCP client. Navigate with <kbd className="bg-slate-100 border border-slate-300 rounded px-1.5 py-0.5 text-xs font-mono">→</kbd> / <kbd className="bg-slate-100 border border-slate-300 rounded px-1.5 py-0.5 text-xs font-mono">N</kbd> and go back with <kbd className="bg-slate-100 border border-slate-300 rounded px-1.5 py-0.5 text-xs font-mono">←</kbd> / <kbd className="bg-slate-100 border border-slate-300 rounded px-1.5 py-0.5 text-xs font-mono">P</kbd>.</li>
-              </ol>
-
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 mt-6 not-prose">
-                <p className="text-sm font-semibold text-slate-700 mb-3">Quick demo with the official filesystem server:</p>
-                <pre className="text-sm font-mono text-slate-800 whitespace-pre-wrap leading-relaxed">{`# Terminal 1 — start the MCP server on port 3001
-npx -y @modelcontextprotocol/server-filesystem \\
-    --transport sse --port 3001 ~/Documents
-
-# Terminal 2 — start MCP-SPY proxy (TUI opens automatically)
-npx mcp-spy -t 3001 --name filesystem
-
-# Claude Desktop config — point at the PROXY (4000), not the server (3001)
-# Edit: ~/Library/Application Support/Claude/claude_desktop_config.json
-{
-  "mcpServers": {
-    "filesystem": {
-      "url": "http://localhost:4000"
-    }
-  }
-}
-# Use "url" — not "command"/"args" — otherwise Claude Desktop
-# spawns the server directly and bypasses the proxy entirely.`}</pre>
-              </div>
-
-              <h3 className="text-xl font-bold text-slate-800 mb-3 mt-10">Keyboard shortcuts</h3>
-              <p>
-                These shortcuts work once the TUI is running with an active proxy.
-              </p>
-
-              <div className="border border-slate-200 rounded-2xl overflow-hidden mt-8 not-prose shadow-sm">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-slate-50 border-b border-slate-200 text-slate-700">
-                      <th className="py-3 px-6 font-bold text-sm uppercase tracking-wider w-32">Key</th>
-                      <th className="py-3 px-6 font-bold text-sm uppercase tracking-wider">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="text-sm text-slate-600 divide-y divide-slate-100 bg-white">
-                    <tr className="hover:bg-slate-50 transition-colors">
-                      <td className="py-3 px-6 font-mono font-bold text-slate-900">↑ / ↓</td>
-                      <td className="py-3 px-6">Navigate between log entries</td>
-                    </tr>
-                    <tr className="hover:bg-slate-50 transition-colors">
-                      <td className="py-3 px-6 font-mono font-bold text-slate-900">s</td>
-                      <td className="py-3 px-6">Cycle server filter — shows all, then each server label in turn</td>
-                    </tr>
-                    <tr className="hover:bg-slate-50 transition-colors">
-                      <td className="py-3 px-6 font-mono font-bold text-slate-900">c</td>
-                      <td className="py-3 px-6">Toggle cURL export view for the selected log</td>
-                    </tr>
-                    <tr className="hover:bg-slate-50 transition-colors">
-                      <td className="py-3 px-6 font-mono font-bold text-slate-900">q</td>
-                      <td className="py-3 px-6">Quit MCP-Spy</td>
-                    </tr>
-                    <tr className="hover:bg-slate-50 transition-colors">
-                      <td className="py-3 px-6 font-mono font-bold text-slate-900">Ctrl+C</td>
-                      <td className="py-3 px-6">Force quit</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <p className="text-sm text-slate-500 mt-4">If you prefer plain terminal output without the TUI (useful in CI pipelines), add the <code>--no-tui</code> flag when starting MCP-Spy.</p>
-            </section>
-
-            {/* CODE EXAMPLES */}
-            <section id="example-nodejs" className="scroll-mt-32 mb-24 border-t border-slate-100 pt-16">
-              <div className="flex items-center gap-3 mb-6">
-                <Code className="w-8 h-8 text-yellow-500" />
-                <h2 className="text-3xl font-bold text-slate-900 m-0">Node.js / TypeScript</h2>
-              </div>
-              <p>
-                MCP-Spy works with any MCP server. You do not need to change your server code at all. If you are building a Node.js MCP server using the official <code>@modelcontextprotocol/sdk</code>:
-              </p>
-
-              <div className="bg-slate-900 rounded-2xl p-6 shadow-xl overflow-x-auto border border-slate-800 mt-8 relative">
-                <div className="absolute top-0 left-0 w-full h-8 bg-slate-800/50 border-b border-slate-700/50 flex items-center px-4 gap-2">
-                  <span className="text-xs font-mono text-slate-400">server.ts — no changes needed</span>
-                </div>
-<pre className="text-cyan-300 font-mono text-sm mt-6 mb-0 bg-transparent"><code>{`import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+          {/* SERVER EXAMPLES */}
+          <section id="example-nodejs" className="scroll-mt-24 mb-16">
+            <SectionHeading>node.js / typescript</SectionHeading>
+            <p>
+              mcp-spy works with any MCP server. you do not need to change your server code at all. if you are
+              building a node.js MCP server using the official{' '}
+              <code className="bg-codebg px-1.5 py-0.5 text-[0.88em]">@modelcontextprotocol/sdk</code>:
+            </p>
+            <CodeBlock label="server.ts — no changes needed">{`import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 
 const server = new Server({ name: "my-tool", version: "1.0.0" });
@@ -848,25 +621,17 @@ const server = new Server({ name: "my-tool", version: "1.0.0" });
 // Your tool definitions...
 
 const transport = new StdioServerTransport();
-await server.connect(transport);`}</code></pre>
-              </div>
-              <p className="text-sm text-slate-500 mt-3">Run your server: <code>node server.js</code> on port 3000. Then start MCP-Spy: <code>npx mcp-spy --target 3000</code>.</p>
-            </section>
+await server.connect(transport);`}</CodeBlock>
+            <p className="text-muted text-[0.88rem]">
+              run your server: <code className="text-[0.88em]">node server.js</code> on port 3000. then start mcp-spy:{' '}
+              <code className="text-[0.88em]">npx mcp-spy --target 3000</code>.
+            </p>
+          </section>
 
-            <section id="example-python" className="scroll-mt-32 mb-24 border-t border-slate-100 pt-16">
-              <div className="flex items-center gap-3 mb-6">
-                <Code className="w-8 h-8 text-blue-500" />
-                <h2 className="text-3xl font-bold text-slate-900 m-0">Python</h2>
-              </div>
-              <p>
-                Using the official <code>mcp</code> Python package. MCP-Spy intercepts the stdio stream transparently.
-              </p>
-
-              <div className="bg-slate-900 rounded-2xl p-6 shadow-xl overflow-x-auto border border-slate-800 mt-8 relative">
-                <div className="absolute top-0 left-0 w-full h-8 bg-slate-800/50 border-b border-slate-700/50 flex items-center px-4 gap-2">
-                  <span className="text-xs font-mono text-slate-400">server.py</span>
-                </div>
-<pre className="text-cyan-300 font-mono text-sm mt-6 mb-0 bg-transparent"><code>{`import asyncio
+          <section id="example-python" className="scroll-mt-24 mb-16">
+            <SectionHeading>python</SectionHeading>
+            <p>using the official <code className="bg-codebg px-1.5 py-0.5 text-[0.88em]">mcp</code> python package. mcp-spy intercepts the stdio stream transparently.</p>
+            <CodeBlock label="server.py">{`import asyncio
 from mcp.server.stdio import stdio_server
 from mcp.server import Server
 
@@ -886,24 +651,13 @@ async def main():
         )
 
 if __name__ == "__main__":
-    asyncio.run(main())`}</code></pre>
-              </div>
-            </section>
+    asyncio.run(main())`}</CodeBlock>
+          </section>
 
-            <section id="example-go" className="scroll-mt-32 mb-24 border-t border-slate-100 pt-16">
-              <div className="flex items-center gap-3 mb-6">
-                <Code className="w-8 h-8 text-cyan-500" />
-                <h2 className="text-3xl font-bold text-slate-900 m-0">Go</h2>
-              </div>
-              <p>
-                Using the <code>mark3labs/mcp-go</code> package. Compile your server, run it on a port, and point MCP-Spy at it.
-              </p>
-
-              <div className="bg-slate-900 rounded-2xl p-6 shadow-xl overflow-x-auto border border-slate-800 mt-8 relative">
-                <div className="absolute top-0 left-0 w-full h-8 bg-slate-800/50 border-b border-slate-700/50 flex items-center px-4 gap-2">
-                  <span className="text-xs font-mono text-slate-400">main.go</span>
-                </div>
-<pre className="text-cyan-300 font-mono text-sm mt-6 mb-0 bg-transparent"><code>{`package main
+          <section id="example-go" className="scroll-mt-24 mb-16">
+            <SectionHeading>go</SectionHeading>
+            <p>using the <code className="bg-codebg px-1.5 py-0.5 text-[0.88em]">mark3labs/mcp-go</code> package. compile your server, run it on a port, and point mcp-spy at it.</p>
+            <CodeBlock label="main.go">{`package main
 
 import (
 	"context"
@@ -930,24 +684,13 @@ func main() {
 	if err := server.ServeStdio(s); err != nil {
 		panic(err)
 	}
-}`}</code></pre>
-              </div>
-            </section>
+}`}</CodeBlock>
+          </section>
 
-            <section id="example-rust" className="scroll-mt-32 mb-24 border-t border-slate-100 pt-16">
-              <div className="flex items-center gap-3 mb-6">
-                <Code className="w-8 h-8 text-orange-600" />
-                <h2 className="text-3xl font-bold text-slate-900 m-0">Rust</h2>
-              </div>
-              <p>
-                Using the <code>mcp-rs</code> crate. Compile your binary and point MCP-Spy at the running process.
-              </p>
-
-              <div className="bg-slate-900 rounded-2xl p-6 shadow-xl overflow-x-auto border border-slate-800 mt-8 relative">
-                <div className="absolute top-0 left-0 w-full h-8 bg-slate-800/50 border-b border-slate-700/50 flex items-center px-4 gap-2">
-                  <span className="text-xs font-mono text-slate-400">src/main.rs</span>
-                </div>
-<pre className="text-cyan-300 font-mono text-sm mt-6 mb-0 bg-transparent"><code>{`use mcp_rs::server::Server;
+          <section id="example-rust" className="scroll-mt-24 mb-16">
+            <SectionHeading>rust</SectionHeading>
+            <p>using the <code className="bg-codebg px-1.5 py-0.5 text-[0.88em]">mcp-rs</code> crate. compile your binary and point mcp-spy at the running process.</p>
+            <CodeBlock label="src/main.rs">{`use mcp_rs::server::Server;
 use mcp_rs::transport::stdio::StdioTransport;
 use tokio;
 
@@ -960,142 +703,178 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     server.listen().await?;
     Ok(())
-}`}</code></pre>
-              </div>
-            </section>
+}`}</CodeBlock>
+          </section>
 
-            {/* CLI REFERENCE */}
-            <section id="cli-reference" className="scroll-mt-32 mb-24 border-t border-slate-100 pt-16">
-              <div className="flex items-center gap-3 mb-6">
-                <Terminal className="w-8 h-8 text-slate-800" />
-                <h2 className="text-3xl font-bold text-slate-900 m-0">CLI Reference</h2>
-              </div>
+          <Divider />
 
-              <div className="border border-slate-200 rounded-2xl overflow-hidden mt-8 not-prose shadow-sm">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-slate-50 border-b border-slate-200 text-slate-700">
-                      <th className="py-4 px-6 font-bold text-sm uppercase tracking-wider">Flag</th>
-                      <th className="py-4 px-6 font-bold text-sm uppercase tracking-wider">Description</th>
-                      <th className="py-4 px-6 font-bold text-sm uppercase tracking-wider text-right">Default</th>
-                    </tr>
-                  </thead>
-                  <tbody className="text-sm text-slate-600 divide-y divide-slate-100 bg-white">
-                    <tr className="hover:bg-slate-50 transition-colors">
-                      <td className="py-4 px-6 font-mono font-bold text-slate-900 whitespace-nowrap">--target &lt;port&gt;</td>
-                      <td className="py-4 px-6 leading-relaxed"><strong>Required.</strong> The local port where your actual MCP server is running.</td>
-                      <td className="py-4 px-6 font-mono text-slate-400 text-right">—</td>
-                    </tr>
-                    <tr className="hover:bg-slate-50 transition-colors">
-                      <td className="py-4 px-6 font-mono font-bold text-slate-900 whitespace-nowrap">--name &lt;label&gt;</td>
-                      <td className="py-4 px-6 leading-relaxed">Human-readable label for this server. Shows in TUI and dashboard for multi-MCP setups. E.g. <code>--name filesystem</code>.</td>
-                      <td className="py-4 px-6 font-mono text-slate-400 text-right">port-{'{n}'}</td>
-                    </tr>
-                    <tr className="hover:bg-slate-50 transition-colors bg-sky-50/50">
-                      <td className="py-4 px-6 font-mono font-bold text-sky-700 whitespace-nowrap">--sync &lt;token&gt;</td>
-                      <td className="py-4 px-6 leading-relaxed text-sky-900">Your Pro API key. Uploads logs to your cloud dashboard in real time.</td>
-                      <td className="py-4 px-6 font-mono text-sky-300 text-right">—</td>
-                    </tr>
-                    <tr className="hover:bg-slate-50 transition-colors">
-                      <td className="py-4 px-6 font-mono font-bold text-slate-900 whitespace-nowrap">--redact-pii</td>
-                      <td className="py-4 px-6 leading-relaxed">Auto-redact secrets (AWS keys, tokens, emails, passwords) from payloads before saving or syncing. Proxy traffic is unaffected.</td>
-                      <td className="py-4 px-6 font-mono text-slate-400 text-right">off</td>
-                    </tr>
-                    <tr className="hover:bg-slate-50 transition-colors">
-                      <td className="py-4 px-6 font-mono font-bold text-slate-900 whitespace-nowrap">--mock</td>
-                      <td className="py-4 px-6 leading-relaxed">Mock mode — return saved responses from the local database instead of forwarding to the real server.</td>
-                      <td className="py-4 px-6 font-mono text-slate-400 text-right">off</td>
-                    </tr>
-                    <tr className="hover:bg-slate-50 transition-colors">
-                      <td className="py-4 px-6 font-mono font-bold text-slate-900 whitespace-nowrap">--no-tui</td>
-                      <td className="py-4 px-6 leading-relaxed">Disables the interactive TUI. Useful in CI, scripts, or piped output.</td>
-                      <td className="py-4 px-6 font-mono text-slate-400 text-right">off</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+          {/* TUI */}
+          <section id="tui-shortcuts" className="scroll-mt-24 mb-16">
+            <SectionHeading>TUI — invoking &amp; keyboard shortcuts</SectionHeading>
 
-              <div className="mt-6 bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm text-slate-600">
-                <strong className="text-slate-900">Test subcommand:</strong> <code>mcp-spy test --target &lt;port&gt;</code> — see the <a href="#ci-runner" className="text-sky-600 hover:underline">CI/CD Test Runner</a> section for full options.
-              </div>
+            <SubHeading>how to launch the TUI</SubHeading>
+            <p>
+              the terminal UI is a full-screen interface that shows a live list of intercepted MCP calls on the left
+              and the selected payload on the right. it opens automatically whenever you start the proxy with a{' '}
+              <code className="bg-codebg px-1.5 py-0.5 text-[0.88em]">--target</code> port.
+            </p>
+            <CodeBlock label="terminal — start the TUI alongside the proxy">{`# basic — proxy + TUI in one command
+npx mcp-spy -t 3001
 
-              <h3 className="text-xl font-bold text-slate-900 mt-12 mb-4">Running multiple MCP servers simultaneously</h3>
-              <p className="text-slate-600 text-sm">Use <code>--name</code> to label each instance. Run each in a separate terminal:</p>
-              <div className="bg-slate-900 rounded-xl p-4 mt-4 overflow-x-auto border border-slate-800">
-                <pre className="text-emerald-400 font-mono text-sm m-0">{`# Terminal 1 — filesystem MCP
-npx mcp-spy --target 3000 --name filesystem --sync YOUR_KEY
+# with a human-readable label
+npx mcp-spy -t 3001 --name filesystem
+
+# disable TUI, keep plain console output (useful in CI)
+npx mcp-spy -t 3001 --no-tui`}</CodeBlock>
+
+            <SubHeading>standalone welcome &amp; guided setup</SubHeading>
+            <p>
+              running <code className="bg-codebg px-1.5 py-0.5 text-[0.88em]">npx mcp-spy</code>{' '}
+              <strong className="font-medium">without <code className="text-[0.88em]">--target</code></strong> opens an
+              interactive welcome screen instead of the proxy: a 4-step guided setup that shows you how to connect
+              the official <code className="bg-codebg px-1.5 py-0.5 text-[0.88em]">@modelcontextprotocol/server-filesystem</code>{' '}
+              server to mcp-spy and your MCP client. navigate with{' '}
+              <kbd className="bg-codebg border border-ink/20 px-1.5 py-0.5 text-[0.8rem]">→</kbd> /{' '}
+              <kbd className="bg-codebg border border-ink/20 px-1.5 py-0.5 text-[0.8rem]">N</kbd> and go back with{' '}
+              <kbd className="bg-codebg border border-ink/20 px-1.5 py-0.5 text-[0.8rem]">←</kbd> /{' '}
+              <kbd className="bg-codebg border border-ink/20 px-1.5 py-0.5 text-[0.8rem]">P</kbd>.
+            </p>
+            <CodeBlock label="quick demo with the official filesystem server">{`# Terminal 1 — start the MCP server on port 3001
+npx -y @modelcontextprotocol/server-filesystem \\
+    --transport sse --port 3001 ~/Documents
+
+# Terminal 2 — start mcp-spy proxy (TUI opens automatically)
+npx mcp-spy -t 3001 --name filesystem
+
+# Claude Desktop config — point at the PROXY (4000), not the server (3001)
+# Edit: ~/Library/Application Support/Claude/claude_desktop_config.json
+{
+  "mcpServers": {
+    "filesystem": {
+      "url": "http://localhost:4000"
+    }
+  }
+}
+# Use "url" — not "command"/"args" — otherwise Claude Desktop
+# spawns the server directly and bypasses the proxy entirely.`}</CodeBlock>
+
+            <SubHeading>keyboard shortcuts</SubHeading>
+            <div className="border border-ink/15 overflow-x-auto">
+              <table className="w-full text-left border-collapse text-[0.88rem]">
+                <thead>
+                  <tr className="border-b border-ink/15 bg-codebg text-[0.75rem] uppercase tracking-[0.12em] text-muted">
+                    <th className="py-2.5 px-4 font-medium w-32">key</th>
+                    <th className="py-2.5 px-4 font-medium">action</th>
+                  </tr>
+                </thead>
+                <tbody className="text-muted">
+                  {[
+                    ['↑ / ↓', 'navigate between log entries'],
+                    ['s', 'cycle server filter — shows all, then each server label in turn'],
+                    ['c', 'toggle cURL export view for the selected log'],
+                    ['q', 'quit mcp-spy'],
+                    ['Ctrl+C', 'force quit'],
+                  ].map(([key, action]) => (
+                    <tr key={key} className="border-b border-dashed border-ink/10 last:border-b-0">
+                      <td className="py-2.5 px-4 font-medium text-ink whitespace-nowrap">{key}</td>
+                      <td className="py-2.5 px-4">{action}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="text-muted text-[0.88rem] mt-4">
+              if you prefer plain terminal output without the TUI (useful in CI pipelines), add the{' '}
+              <code className="bg-codebg px-1.5 py-0.5 text-[0.88em]">--no-tui</code> flag when starting mcp-spy.
+            </p>
+          </section>
+
+          {/* CLI REFERENCE */}
+          <section id="cli-reference" className="scroll-mt-24 mb-16">
+            <SectionHeading>CLI reference</SectionHeading>
+            <div className="border border-ink/15 overflow-x-auto">
+              <table className="w-full text-left border-collapse text-[0.88rem]">
+                <thead>
+                  <tr className="border-b border-ink/15 bg-codebg text-[0.75rem] uppercase tracking-[0.12em] text-muted">
+                    <th className="py-2.5 px-4 font-medium">flag</th>
+                    <th className="py-2.5 px-4 font-medium">description</th>
+                    <th className="py-2.5 px-4 font-medium text-right">default</th>
+                  </tr>
+                </thead>
+                <tbody className="text-muted">
+                  {[
+                    ['--target <port>', 'required. the local port where your actual MCP server is running.', '—'],
+                    ['--name <label>', 'human-readable label for this server. shows in the TUI for multi-MCP setups. e.g. --name filesystem.', 'port-{n}'],
+                    ['--redact-pii', 'auto-redact secrets (aws keys, tokens, emails, passwords) from payloads before saving. proxy traffic is unaffected.', 'off'],
+                    ['--mock', 'mock mode — return saved responses from the local database instead of forwarding to the real server.', 'off'],
+                    ['--no-tui', 'disables the interactive TUI. useful in CI, scripts, or piped output.', 'off'],
+                  ].map(([flag, desc, def]) => (
+                    <tr key={flag} className="border-b border-dashed border-ink/10 last:border-b-0">
+                      <td className="py-2.5 px-4 font-medium text-ink whitespace-nowrap">{flag}</td>
+                      <td className="py-2.5 px-4">{desc}</td>
+                      <td className="py-2.5 px-4 text-right text-faint whitespace-nowrap">{def}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <Callout title="test subcommand">
+              <code className="text-[0.88em]">mcp-spy test --target &lt;port&gt;</code> — see the{' '}
+              <a href="#ci-runner" className="underline underline-offset-4 decoration-muted hover:decoration-ink">CI/CD test runner</a> section
+              for full options.
+            </Callout>
+
+            <SubHeading>running multiple MCP servers simultaneously</SubHeading>
+            <p className="text-muted text-[0.9rem]">use <code className="bg-codebg px-1.5 py-0.5 text-[0.88em]">--name</code> to label each instance. run each in a separate terminal:</p>
+            <CodeBlock>{`# Terminal 1 — filesystem MCP
+npx mcp-spy --target 3000 --name filesystem
 
 # Terminal 2 — GitHub MCP
-npx mcp-spy --target 3001 --name github --sync YOUR_KEY`}</pre>
-              </div>
-              <p className="text-sm text-slate-500 mt-3">In the dashboard, each log shows its server label. Click a label to filter the list to that server only.</p>
+npx mcp-spy --target 3001 --name github`}</CodeBlock>
+            <p className="text-muted text-[0.88rem]">
+              in the TUI, each log shows its server label. press{' '}
+              <kbd className="bg-codebg border border-ink/20 px-1.5 py-0.5 text-[0.8rem]">s</kbd> to cycle the filter
+              through each server.
+            </p>
+          </section>
 
-              <h3 className="text-xl font-bold text-slate-900 mt-12 mb-4">Where your data is stored</h3>
-              <div className="grid sm:grid-cols-2 gap-4 not-prose mt-4">
-                <div className="bg-slate-50 border border-slate-200 rounded-xl p-5">
-                  <h4 className="font-bold text-slate-900 text-sm mb-2">Local (free tier)</h4>
-                  <p className="text-xs text-slate-500 leading-relaxed mb-3">Every intercepted request is saved to a SQLite database on your machine immediately — no network needed.</p>
-                  <code className="text-xs bg-slate-900 text-emerald-400 px-3 py-2 rounded-lg block">~/.mcp-spy/mcp_logs.db</code>
-                  <ul className="text-xs text-slate-500 mt-3 space-y-1">
-                    <li>✓ Persists across terminal restarts</li>
-                    <li>✓ No size limit beyond disk space</li>
-                    <li>✓ Read by the TUI in real time</li>
-                    <li>✗ Lost if you wipe your machine</li>
-                  </ul>
-                </div>
-                <div className="bg-sky-50 border border-sky-100 rounded-xl p-5">
-                  <h4 className="font-bold text-sky-900 text-sm mb-2">Cloud (Pro — <code>--sync</code>)</h4>
-                  <p className="text-xs text-sky-700 leading-relaxed mb-3">Each log is also sent to your personal Convex database in real time. Available from any device via the dashboard.</p>
-                  <code className="text-xs bg-sky-900 text-sky-300 px-3 py-2 rounded-lg block">mcpspy.dev/dashboard</code>
-                  <ul className="text-xs text-sky-700 mt-3 space-y-1">
-                    <li>✓ Survives machine wipe</li>
-                    <li>✓ Accessible from browser anywhere</li>
-                    <li>✓ Shareable trace links</li>
-                    <li>✓ Real-time live updates</li>
-                  </ul>
-                </div>
-              </div>
+          {/* DATA STORAGE */}
+          <section id="data-storage" className="scroll-mt-24 mb-16">
+            <SectionHeading>data storage</SectionHeading>
+            <p>
+              every intercepted request is saved to a sqlite database on your machine immediately — no network
+              needed, and nothing ever leaves your computer.
+            </p>
+            <CodeBlock>{`~/.mcp-spy/mcp_logs.db`}</CodeBlock>
+            <ul className="list-none p-0 m-0 text-[0.9rem] text-muted space-y-1">
+              <li>✓ persists across terminal restarts</li>
+              <li>✓ no size limit beyond disk space</li>
+              <li>✓ read by the TUI in real time</li>
+              <li>✓ plain sqlite — query it with any client you like</li>
+            </ul>
+            <Callout>
+              that&apos;s the whole storage story. no accounts, no api keys, no cloud. delete the file and every
+              trace of your logs is gone.
+            </Callout>
+          </section>
 
-              <div id="activating-premium-features" className="scroll-mt-32 mt-12 bg-sky-50 border border-sky-100 rounded-2xl p-8">
-                <h3 className="text-xl font-bold text-sky-900 mb-4 flex items-center gap-2">
-                  <Zap className="w-5 h-5 text-sky-500" />
-                  Activating Premium Features
-                </h3>
-                <p className="text-sky-800 leading-relaxed mb-4 text-sm">
-                  After subscribing at <Link href="/pricing" className="text-sky-700 font-semibold hover:underline">mcpspy.dev/pricing</Link>, go to your <Link href="/dashboard" className="text-sky-700 font-semibold hover:underline">dashboard</Link> to find your API key. Pass it to the CLI with the <code className="bg-sky-100 text-sky-900 px-1.5 py-0.5 rounded">--sync</code> flag to activate Cloud Sync.
-                </p>
-                <pre className="bg-sky-950 p-4 rounded-xl overflow-x-auto text-sm text-sky-200 mt-4 shadow-inner">
-                  <code>{`npx mcp-spy --target 3000 --sync mcp_live_your_api_key_here`}</code>
-                </pre>
-                <p className="text-sky-700 text-xs mt-4">
-                  Without the token, MCP-Spy runs in local mode — free, fully offline, with the TUI only.
-                </p>
-              </div>
-            </section>
-
-          </div>
         </div>
 
-        <footer className="border-t border-slate-200 mt-20 pt-10 pb-12 px-6 lg:px-12">
-          <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="text-center md:text-left">
-              <div className="font-bold text-slate-900 mb-1 tracking-tight text-lg">MCP-Spy</div>
-              <p className="text-slate-500 text-sm">The missing observability layer for the Model Context Protocol.</p>
+        {/* footer */}
+        <footer className="border-t border-ink/10 mt-8 py-8 px-5">
+          <div className="max-w-[78ch] mx-auto lg:px-10 flex flex-col sm:flex-row items-center justify-between gap-4 text-[0.8rem] text-muted">
+            <div>
+              <Link href="/" className="text-ink hover:underline">mcpspy.dev</Link>
+              <span className="px-2">&middot;</span>
+              free &amp; open source observability for MCP
             </div>
-            <div className="flex gap-6">
-              <a href="https://github.com/gabsalvo/mcpspy.dev" className="text-slate-500 hover:text-slate-900 text-sm font-medium transition-colors flex items-center gap-1">
-                GitHub <ExternalLink className="w-3 h-3" />
-              </a>
-              <a href="/llms.txt" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-sky-600 text-sm font-medium transition-colors" title="AI-Friendly Markdown Documentation">
-                llms.txt
-              </a>
-              <Link href="/pricing" className="text-slate-500 hover:text-sky-600 text-sm font-medium transition-colors">
-                Upgrade to Pro
-              </Link>
+            <div className="flex gap-5">
+              <a href="https://github.com/gabsalvo/mcpspy.dev" className="hover:text-ink">github</a>
+              <a href="/llms.txt" target="_blank" rel="noopener noreferrer" className="hover:text-ink" title="AI-friendly markdown documentation">llms.txt</a>
+              <a href="https://gabsalvo.com" className="sunset-hover text-ink">gabsalvo.com</a>
             </div>
           </div>
         </footer>
-
       </main>
     </div>
   );

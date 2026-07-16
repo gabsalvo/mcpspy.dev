@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from 'react';
-import { Copy, Check } from 'lucide-react';
 
 export function CopyAsMarkdownButton() {
   const [copied, setCopied] = useState(false);
@@ -21,20 +20,10 @@ export function CopyAsMarkdownButton() {
   return (
     <button
       onClick={handleCopy}
-      className="fixed bottom-6 right-6 z-50 bg-slate-900 hover:bg-slate-800 text-white rounded-full px-4 py-3 shadow-lg shadow-sky-500/20 transition-all flex items-center justify-center gap-2 font-medium text-sm group"
-      title="Copy whole documentation as Markdown for AI Context"
+      className="fixed bottom-6 right-6 z-50 bg-paper border border-ink text-ink hover:bg-ink hover:text-paper px-4 py-2 transition-colors text-[0.8rem] cursor-pointer"
+      title="Copy the whole documentation as markdown for AI context"
     >
-      {copied ? (
-        <>
-          <Check className="w-4 h-4 text-green-400" />
-          <span>Copied!</span>
-        </>
-      ) : (
-        <>
-          <Copy className="w-4 h-4 group-hover:scale-110 transition-transform" />
-          <span>Copy as Markdown</span>
-        </>
-      )}
+      {copied ? '✓ copied' : 'copy as markdown'}
     </button>
   );
 }

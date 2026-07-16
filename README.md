@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# mcpspy.dev
 
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+      .----.
+      | -o )==>
+      '--. \
+         |  |
+         |  |
+  ~~~~~~~|  |~~~~~~~
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The website and documentation for **mcp-spy** — browser devtools, but for AI tool calls.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+mcp-spy is a free & open-source observability proxy for the [Model Context Protocol](https://modelcontextprotocol.io). It sits between your AI client (Claude Desktop, Cursor, Windsurf…) and any MCP server, and shows every JSON-RPC message — request, response, duration, status — live in a terminal UI.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npx mcp-spy
+```
 
-## Learn More
+No account. No cloud. No telemetry. Logs live in a local SQLite database on your machine.
 
-To learn more about Next.js, take a look at the following resources:
+## This repo
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This repository contains the [mcpspy.dev](https://mcpspy.dev) website: a static landing page and the full documentation, built with [Next.js](https://nextjs.org) and Tailwind CSS. It shares its paper-and-ink, ASCII-art design language with [gabsalvo.com](https://gabsalvo.com) and [domoroshi.tech](https://domoroshi.tech).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Develop
 
-## Deploy on Vercel
+```bash
+npm install
+npm run dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Open [http://localhost:3000](http://localhost:3000).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Build
+
+```bash
+npm run build
+```
+
+Deployed on [Vercel](https://vercel.com) — every push to `main` redeploys automatically.
+
+## Contributing
+
+Found a bug or a typo? Open an issue. Want a feature? PRs welcome.
+
+## License
+
+[MIT](LICENSE) © Gabriele Salvo
