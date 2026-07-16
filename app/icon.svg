@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <style>
+    .paper { fill: #faf8f3; }
+    .ink { fill: #1a1a1a; }
+    .lens { fill: #faf8f3; }
+    @media (prefers-color-scheme: dark) {
+      .paper { fill: #1a1a1a; }
+      .ink { fill: #faf8f3; }
+      .lens { fill: #1a1a1a; }
+    }
+  </style>
+  <!-- paper -->
+  <rect class="paper" width="64" height="64"/>
+  <!-- periscope: head looking left, tube sinking below the waves -->
+  <rect class="ink" x="36" y="20" width="9" height="38"/>
+  <rect class="ink" x="20" y="12" width="25" height="11"/>
+  <circle class="lens" cx="26" cy="17.5" r="3"/>
+  <!-- sunset horizon wave -->
+  <path d="M0 46 Q4 42 8 46 T16 46 T24 46 T32 46 T40 46 T48 46 T56 46 T64 46"
+        fill="none" stroke="#b9532f" stroke-width="3" stroke-linecap="round"/>
+</svg>
